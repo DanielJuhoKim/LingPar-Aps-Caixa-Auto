@@ -1,5 +1,17 @@
 # Caixa Eletrônico Automático
-```ebnf
+
+```
+CAIXA_AUTO = MAQUINIHA
+
+MAQUININHA = PAGAMENTOS | "cancel"
+
+PAGAMENTO = {CARRINHO}
+
+CARRINHO = "if" "(" ENTRADA OPERATION "cancel"  ")" "{"  "}"
+
+```
+
+```
 CAIXA_AUTO = CARRINHO | "CANCELAR COMPRA" ;
 
 CARRINHO = ( LISTA_PRODUTOS, { LISTA_PRODUTOS }, PRECO_TOTAL ), PAGAMENTO ;
@@ -15,30 +27,13 @@ PRODUTO_QR = DIGIT , { DIGIT } ;
 PRECO_TOTAL = DIGIT , { DIGIT } ;
 DIGIT  = "0" | "..." | "9" ;
 CHARACTER = "a" | "..." | "z" | "A" | "..." | "Z" ;
+ENTRADA = CHARACTER, { CHARACTER }
+OPERATION = "+" | "-" | "*" | "/" | "AND" | "OR" | "<" | ">" | "<=" | ">=" | "==" | "!=";
 ```
 
+## Exemplo
 ```
 // Os valores de cada produto são guardados em um dicionário
-
-Exemplo de entrada
-(10++)  (7) (9-) (101+++) 1023 CREDITO
-
-LISTA_PRODUTOS =
-1. [(10)]
-2. [(10, +)]
-3. [(10, +, +)]
-4. [(10, +, +), (7)]
-5. [(10, +, +), (7), (9)]
-6. [(10, +, +), (7), (9-)]
-7. [(10, +, +), (7), (9-), (100)]
-8. [(10, +, +), (7), (9-), (100+)]
-9. [(10, +, +), (7), (9-), (100++)]
-10. [(10, +, +), (7), (9-), (100+++)]
-
-preco_total = 8 // Valor dado pela quantidade de produtos(Isso apenas para esse exemplo)
-
-PAGAMENTO = (CREDITO, APROVADO)
-// O banco faz a aprovação dependendo do saldo do cartão e o preco total obtido
 ```
 
 Essa EBNF representa a linguagem de um caixa eletrônico automático de um mercadinho de um prédio, onde a partir dele, os residentes podem comprar os produtos ao passar os QR code dos produtos e realizar o pagamento
