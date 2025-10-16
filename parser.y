@@ -12,8 +12,18 @@ typedef struct {
     int estoque;
 } Produto;
 
+// Estrutura para armazenar vendas realizadas
+typedef struct {
+    char* nome;
+    int quantidade;
+    double preco_unitario;
+} Venda;
+
 Produto tabela_produtos[100];
 int num_produtos = 0;
+
+Venda vendas_realizadas[100];
+int num_vendas = 0;
 double total_venda = 0.0;
 
 void adicionar_produto(char* nome, int qr_code, double preco, int estoque) {
@@ -23,6 +33,24 @@ void adicionar_produto(char* nome, int qr_code, double preco, int estoque) {
         tabela_produtos[num_produtos].preco = preco;
         tabela_produtos[num_produtos].estoque = estoque;
         num_produtos++;
+    }
+}
+
+void adicionar_venda(char* nome, int quantidade, double preco_unitario) {
+    if(num_vendas < 100) {
+        // Verifica se já existe uma venda para este produto
+        for(int i = 0; i < num_vendas; i++) {
+            if(strcmp(vendas_realizadas[i].nome, nome) == 0) {
+                vendas_realizadas[i].quantidade += quantidade;
+                return;
+            }
+        }
+        
+        // Se não existe, adiciona nova venda
+        vendas_realizadas[num_vendas].nome = strdup(nome);
+        vendas_realizadas[num_vendas].quantidade = quantidade;
+        vendas_realizadas[num_vendas].preco_unitario = preco_unitario;
+        num_vendas++;
     }
 }
 
@@ -37,44 +65,23 @@ int encontrar_produto(char* nome) {
 
 // Função para imprimir apenas o resumo da compra
 void imprimir_resumo_compra() {
-    printf("\n=== RESUMO DA COMPRA ===\n");
-    
-    // Contar produtos únicos e suas quantidades
-    typedef struct {
-        char* nome;
-        int quantidade;
-        double preco_unitario;
-    } ItemResumo;
-    
-    ItemResumo itens[100];
-    int num_itens = 0;
-    
-    for(int i = 0; i < num_produtos; i++) {
-        int encontrado = 0;
-        for(int j = 0; j < num_itens; j++) {
-            if(strcmp(itens[j].nome, tabela_produtos[i].nome) == 0) {
-                itens[j].quantidade++;
-                encontrado = 1;
-                break;
-            }
-        }
-        if(!encontrado && num_itens < 100) {
-            itens[num_itens].nome = tabela_produtos[i].nome;
-            itens[num_itens].quantidade = 1;
-            itens[num_itens].preco_unitario = tabela_produtos[i].preco;
-            num_itens++;
-        }
-    }
-    
-    // Imprimir produtos
+    // Imprimir produtos vendidos
     printf("Produtos: ");
-    for(int i = 0; i < num_itens; i++) {
-        printf("%dx %s", itens[i].quantidade, itens[i].nome);
-        if(i < num_itens - 1) {
+    for(int i = 0; i < num_vendas; i++) {
+        printf("%dx %s", vendas_realizadas[i].quantidade, vendas_realizadas[i].nome);
+        if(i < num_vendas - 1) {
             printf(", ");
         }
     }
     printf("\n");
+}
+
+void limpar_vendas() {
+    for(int i = 0; i < num_vendas; i++) {
+        free(vendas_realizadas[i].nome);
+    }
+    num_vendas = 0;
+    total_venda = 0.0;
 }
 
 int yylex(void);
@@ -98,7 +105,7 @@ int pagamento_aprovado = 1;
 %token START END PRODUCT STOCK SELL PAYMENT CREDIT DEBIT PIX
 %token IF THEN ELSE PRINT WITH_PRICE QUANTITY PAYMENT_APPROVED
 %token APROVED REFUSED
-%token PLUS MINUS MULT DIV ASSIGN EQ NEQ GT LT GTE LTE
+%token PROVIDE PLUS MINUS MULT DIV ASSIGN EQ NEQ GT LT GTE LTE END_LINE
 
 %type <num> expressao
 %type <bool_val> condicao
@@ -121,10 +128,10 @@ bloco:
     ;
 
 declaracao: 
-    PRODUCT identificador '=' NUMBER WITH_PRICE numero_preco ';' {
+    PRODUCT identificador ASSIGN NUMBER WITH_PRICE numero_preco END_LINE {
         adicionar_produto($2, (int)$4, $6, 0);
     }
-    | STOCK identificador '=' NUMBER ';' {
+    | STOCK identificador ASSIGN NUMBER END_LINE {
         int idx = encontrar_produto($2);
         if(idx >= 0) {
             tabela_produtos[idx].estoque = (int)$4;
@@ -133,13 +140,16 @@ declaracao:
     ;
 
 instrucao: 
-    SELL identificador ':' QUANTITY quantidade ';' {
+    SELL identificador QUANTITY quantidade END_LINE {
         int idx = encontrar_produto($2);
         if(idx >= 0) {
-            if(tabela_produtos[idx].estoque >= (int)$5) {
-                double valor_venda = tabela_produtos[idx].preco * $5;
+            if(tabela_produtos[idx].estoque >= (int)$4) {
+                double valor_venda = tabela_produtos[idx].preco * $4;
                 total_venda += valor_venda;
-                tabela_produtos[idx].estoque -= (int)$5;
+                tabela_produtos[idx].estoque -= (int)$4;
+                
+                // ADICIONAR VENDA À LISTA DE VENDAS REALIZADAS
+                adicionar_venda($2, (int)$4, tabela_produtos[idx].preco);
             } else {
                 printf("Erro: Estoque insuficiente para %s\n", $2);
             }
@@ -147,18 +157,23 @@ instrucao:
             printf("Erro: Produto %s não encontrado\n", $2);
         }
     }
-    | PAYMENT metodo_pagamento resultado_pagamento ';' {
-        imprimir_resumo_compra();
-        printf("Método de pagamento: %s\n", $2);
-        printf("Total da venda: R$ %.2f\n", total_venda);
-        printf("Status: %s\n", $3);
+    | PAYMENT metodo_pagamento resultado_pagamento END_LINE {
+        // VERIFICAR SE O PAGAMENTO FOI APROVADO ANTES DE IMPRIMIR O RESUMO
+        if (strcmp($3, "APROVADO") == 0) {
+            imprimir_resumo_compra();
+            printf("Método de pagamento: %s\n", $2);
+            printf("Total da venda: R$ %.2f\n", total_venda);
+            printf("Status: %s\n", $3);
+        } else {
+            printf("\nPagamento %s\n", $3);
+        }
         
         // Reset para próxima compra
+        limpar_vendas();
         num_produtos = 0;
-        total_venda = 0.0;
     }
-    | IF condicao THEN bloco ';'
-    | IF condicao THEN bloco ELSE bloco ';'
+    | IF condicao THEN bloco END_LINE
+    | IF condicao THEN bloco ELSE bloco END_LINE
     ;
 
 metodo_pagamento: 
@@ -217,32 +232,22 @@ quantidade: NUMBER { $$ = $1; }
 %%
 
 void yyerror(const char *s) {
-    fprintf(stderr, "Erro de sintaxe: %s\n", s);
+    fprintf(stderr, "[PARSER] Erro de sintaxe: %s\n", s);
 }
 
 int main(int argc, char *argv[]) {
-    printf("======= Sistema de Vendas ======\n");
+    printf("======= Mercadinho do seu Prédinho ======\n");
     
     if (argc > 1) {
-        // Modo arquivo (./programa arquivo.jota)
+        // Modo arquivo como argumento
         FILE* file = fopen(argv[1], "r");
         if(!file) {
             fprintf(stderr, "Erro: Não foi possível abrir o arquivo %s\n", argv[1]);
             return 1;
         }
         yyin = file;
-        printf("Processando arquivo: %s\n", argv[1]);
     } else {
-        // Verifica se a entrada padrão é um terminal (não redirecionada)
-        int is_terminal = isatty(fileno(stdin));
-        
-        if (!is_terminal) {
-            // Modo redirecionamento (< arquivo)
-            printf("Processando entrada redirecionada...\n");
-        } else {
-            // Modo interativo
-            printf("Digite os comandos (INICIAR para começar, Ctrl+D para finalizar):\n");
-        }
+        // Modo redirecionamento ou interativo
         yyin = stdin;
     }
     

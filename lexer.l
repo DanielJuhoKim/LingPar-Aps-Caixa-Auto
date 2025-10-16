@@ -40,6 +40,7 @@ COMENTARIO \/\/[^\n]*
 "APROVADO"   { return APROVED; }
 "RECUSADO"   { return REFUSED; }
 
+":"          { return PROVIDE; }
 "+"          { return PLUS; }
 "-"          { return MINUS; }
 "*"          { return MULT; }
@@ -51,8 +52,7 @@ COMENTARIO \/\/[^\n]*
 "<"          { return LT; }
 ">="         { return GTE; }
 "<="         { return LTE; }
-":"          { return ':'; }
-";"          { return ';'; }
+";"          { return END_LINE; }
 
 {NUM}        { yylval.num = atof(yytext); return NUMBER; }
 {STRING}     { yylval.str = strdup(yytext); return STRING; }
@@ -61,8 +61,7 @@ COMENTARIO \/\/[^\n]*
 [ \t\r\n]+   { /* ignorar espaços, tabs e CR/LF */ }
 
 .            { 
-    printf("[Lexer]: Caractere não reconhecido: '%s' (ASCII: %d)\n", 
-           yytext, (unsigned char)yytext[0]); 
+    printf("[Lexer]: Caractere não reconhecido: '%s'\n", yytext); 
 }
 
 %%

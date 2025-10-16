@@ -76,17 +76,19 @@ extern int yydebug;
     PAYMENT_APPROVED = 277,        /* PAYMENT_APPROVED  */
     APROVED = 278,                 /* APROVED  */
     REFUSED = 279,                 /* REFUSED  */
-    PLUS = 280,                    /* PLUS  */
-    MINUS = 281,                   /* MINUS  */
-    MULT = 282,                    /* MULT  */
-    DIV = 283,                     /* DIV  */
-    ASSIGN = 284,                  /* ASSIGN  */
-    EQ = 285,                      /* EQ  */
-    NEQ = 286,                     /* NEQ  */
-    GT = 287,                      /* GT  */
-    LT = 288,                      /* LT  */
-    GTE = 289,                     /* GTE  */
-    LTE = 290                      /* LTE  */
+    PROVIDE = 280,                 /* PROVIDE  */
+    PLUS = 281,                    /* PLUS  */
+    MINUS = 282,                   /* MINUS  */
+    MULT = 283,                    /* MULT  */
+    DIV = 284,                     /* DIV  */
+    ASSIGN = 285,                  /* ASSIGN  */
+    EQ = 286,                      /* EQ  */
+    NEQ = 287,                     /* NEQ  */
+    GT = 288,                      /* GT  */
+    LT = 289,                      /* LT  */
+    GTE = 290,                     /* GTE  */
+    LTE = 291,                     /* LTE  */
+    END_LINE = 292                 /* END_LINE  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -95,13 +97,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 88 "parser.y"
+#line 95 "parser.y"
 
     double num;
     char* str;
     int bool_val;
 
-#line 105 "parser.tab.h"
+#line 107 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

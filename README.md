@@ -1,55 +1,304 @@
 # Caixa Eletrônico Automático
 
 ```
-CAIXA_AUTO = MAQUINIHA
+(* Programa principal *)
+programa       = "INICIAR", bloco, "FINALIZAR";
 
-MAQUININHA = PAGAMENTOS | "cancel"
+(* Bloco de declarações e instruções *)
+bloco          = { declaracao | instrucao };
 
-PAGAMENTO = {CARRINHO}
+(* Declarações *)
+declaracao     = ( produto_decl | estoque_decl ), "FIM_LINHA";
+produto_decl   = "PRODUTO", identificador, "ATRIBUIR", NUMBER, "COM_PRECO", numero_preco;
+estoque_decl   = "ESTOQUE", identificador, "ATRIBUIR", NUMBER;
 
-CARRINHO = "if" "(" ENTRADA OPERATION "cancel"  ")" "{"  "}"
+(* Instruções *)
+instrucao      = ( venda | pagamento | condicional ), "FIM_LINHA";
+venda          = "VENDER", identificador, "QUANTIDADE", quantidade;
+pagamento      = "PAGAMENTO", metodo_pagamento, resultado_pagamento;
+condicional    = "SE", condicao, "ENTAO", bloco, [ "SENAO", bloco ];
 
-```
+(* Métodos de pagamento *)
+metodo_pagamento = "CREDITO" | "DEBITO" | "PIX";
+resultado_pagamento = "APROVADO" | "RECUSADO";
 
-```
-CAIXA_AUTO = CARRINHO | "CANCELAR COMPRA" ;
+(* Expressões e condições *)
+condicao       = "PAGAMENTO_APROVADO"
+               | expressao, operador_comparacao, expressao;
+operador_comparacao = ">" | "<" | ">=" | "<=" | "==" | "!=";
 
-CARRINHO = ( LISTA_PRODUTOS, { LISTA_PRODUTOS }, PRECO_TOTAL ), PAGAMENTO ;
+expressao      = termo, { operador_aditivo, termo };
+termo          = fator, { operador_multiplicativo, fator };
+fator          = NUMBER 
+               | identificador
+               | "(", expressao, ")";
+operador_aditivo = "+" | "-";
+operador_multiplicativo = "*" | "/";
 
-PAGAMENTO = "VOLTAR" | (("CREDITO" | "DEBITO" | "PIX") , CARTAO) ;
+(* Elementos básicos *)
+identificador  = IDENTIFIER;
+numero_preco   = NUMBER;
+quantidade     = NUMBER;
 
-CARTAO = "VOLTAR" | BANCO ;
+(* Tokens terminais *)
+NUMBER         = digit, { digit }, [ ".", digit, { digit } ];
+IDENTIFIER     = letter, { letter | digit | "_" };
+digit          = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+letter         = "a" | "b" | ... | "z" | "A" | "B" | ... | "Z";
 
-BANCO = "APROVADO" | "RECUSADO" ;
+(* Palavras reservadas *)
+"INICIAR"      = "INICIAR";
+"FINALIZAR"    = "FINALIZAR";
+"PRODUTO"      = "PRODUTO";
+"ESTOQUE"      = "ESTOQUE";
+"VENDER"       = "VENDER";
+"PAGAMENTO"    = "PAGAMENTO";
+"SE"           = "SE";
+"ENTAO"        = "ENTAO";
+"SENAO"        = "SENAO";
+"CREDITO"      = "CREDITO";
+"DEBITO"       = "DEBITO";
+"PIX"          = "PIX";
+"APROVADO"     = "APROVADO";
+"RECUSADO"     = "RECUSADO";
+"COM_PRECO"    = "COM_PRECO";
+"QUANTIDADE"   = "QUANTIDADE";
+"PAGAMENTO_APROVADO" = "PAGAMENTO_APROVADO";
 
-LISTA_PRODUTOS = "(", PRODUTO_QR, { ("+" | "-" ) }, ")";
-PRODUTO_QR = DIGIT , { DIGIT } ;
-PRECO_TOTAL = DIGIT , { DIGIT } ;
-DIGIT  = "0" | "..." | "9" ;
-CHARACTER = "a" | "..." | "z" | "A" | "..." | "Z" ;
-ENTRADA = CHARACTER, { CHARACTER }
-OPERATION = "+" | "-" | "*" | "/" | "AND" | "OR" | "<" | ">" | "<=" | ">=" | "==" | "!=";
-```
+(* Operadores e símbolos *)
+"ATRIBUIR"     = "=";
+"FIM_LINHA"    = ";";
+"+"            = "+";
+"-"            = "-";
+"*"            = "*";
+"/"            = "/";
+">"            = ">";
+"<"            = "<";
+">="           = ">=";
+"<="           = "<=";
+"=="           = "==";
+"!="           = "!=";(* Programa principal *)
+programa       = "INICIAR", bloco, "FINALIZAR";
 
-## Exemplo
-```
-// Os valores de cada produto são guardados em um dicionário
+(* Bloco de declarações e instruções *)
+bloco          = { declaracao | instrucao };
+
+(* Declarações *)
+declaracao     = ( produto_decl | estoque_decl ), "FIM_LINHA";
+produto_decl   = "PRODUTO", identificador, "ATRIBUIR", NUMBER, "COM_PRECO", numero_preco;
+estoque_decl   = "ESTOQUE", identificador, "ATRIBUIR", NUMBER;
+
+(* Instruções *)
+instrucao      = ( venda | pagamento | condicional ), "FIM_LINHA";
+venda          = "VENDER", identificador, "QUANTIDADE", quantidade;
+pagamento      = "PAGAMENTO", metodo_pagamento, resultado_pagamento;
+condicional    = "SE", condicao, "ENTAO", bloco, [ "SENAO", bloco ];
+
+(* Métodos de pagamento *)
+metodo_pagamento = "CREDITO" | "DEBITO" | "PIX";
+resultado_pagamento = "APROVADO" | "RECUSADO";
+
+(* Expressões e condições *)
+condicao       = "PAGAMENTO_APROVADO"
+               | expressao, operador_comparacao, expressao;
+operador_comparacao = ">" | "<" | ">=" | "<=" | "==" | "!=";
+
+expressao      = termo, { operador_aditivo, termo };
+termo          = fator, { operador_multiplicativo, fator };
+fator          = NUMBER 
+               | identificador
+               | "(", expressao, ")";
+operador_aditivo = "+" | "-";
+operador_multiplicativo = "*" | "/";
+
+(* Elementos básicos *)
+identificador  = IDENTIFIER;
+numero_preco   = NUMBER;
+quantidade     = NUMBER;
+
+(* Tokens terminais *)
+NUMBER         = digit, { digit }, [ ".", digit, { digit } ];
+IDENTIFIER     = letter, { letter | digit | "_" };
+digit          = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9";
+letter         = "a" | "b" | ... | "z" | "A" | "B" | ... | "Z";
+
+(* Palavras reservadas *)
+"INICIAR"      = "INICIAR";
+"FINALIZAR"    = "FINALIZAR";
+"PRODUTO"      = "PRODUTO";
+"ESTOQUE"      = "ESTOQUE";
+"VENDER"       = "VENDER";
+"PAGAMENTO"    = "PAGAMENTO";
+"SE"           = "SE";
+"ENTAO"        = "ENTAO";
+"SENAO"        = "SENAO";
+"CREDITO"      = "CREDITO";
+"DEBITO"       = "DEBITO";
+"PIX"          = "PIX";
+"APROVADO"     = "APROVADO";
+"RECUSADO"     = "RECUSADO";
+"COM_PRECO"    = "COM_PRECO";
+"QUANTIDADE"   = "QUANTIDADE";
+"PAGAMENTO_APROVADO" = "PAGAMENTO_APROVADO";
+
+(* Operadores e símbolos *)
+"ATRIBUIR"     = "=";
+"FIM_LINHA"    = ";";
+"+"            = "+";
+"-"            = "-";
+"*"            = "*";
+"/"            = "/";
+">"            = ">";
+"<"            = "<";
+">="           = ">=";
+"<="           = "<=";
+"=="           = "==";
+"!="           = "!=";
 ```
 
 Essa EBNF representa a linguagem de um caixa eletrônico automático de um mercadinho de um prédio, onde a partir dele, os residentes podem comprar os produtos ao passar os QR code dos produtos e realizar o pagamento
 
-O usuário pode CANCELAR ou continuar com a compra do CARRINHO
+## Exemplo 1
+**Arquivo.jota**
+```
+INICIAR
+PRODUTO arroz = 732 COM_PRECO 10.00;
+PRODUTO frango = 123 COM_PRECO 8.00;
+PRODUTO salmao = 789 COM_PRECO 25.00;
 
-Quando o programa recebe "+", ele aumenta a quantidade do PRODUTO_QR atribuido 
+ESTOQUE arroz = 100;
+ESTOQUE frango = 50;
+ESTOQUE salmao = 20;
 
-Quando o programa recebe "-", ele diminui a quantidade do PRODUTO_QR atribuido
+VENDER arroz QUANTIDADE: 7;
+VENDER frango QUANTIDADE: 37;
+VENDER salmao QUANTIDADE: 1;
 
-Quando o programa recebe "NEW", ele adiciona o PRODUTO_QR na lista como um novo produto
+PAGAMENTO PIX APROVADO;
+FINALIZAR
+```
 
-Depois, terminando de adicionar/remover os itens(PRODUTO_QR's) da LISTA_PRODUTOS, ele vai mostrar o PRECO_TOTAL resultante de todos os produtos na lista e ir para o PAGAMENTO
+**Saída**
+```
+======= Mercadinho do seu Prédinho ======
+Produtos: 7x arroz, 37x frango, 1x salmao
+Método de pagamento: PIX
+Total da venda: R$ 391.00
+Status: APROVADO
 
-Ao pagar, o usuário pode VOLTAR para fazer alterações no CARRINHO ou continuar escolhendo a forma de pagamento e por fim, seguir para o CARTAO para finalizar a compra
+Compra finalizada!
+```
 
-No CARTAO, o usuário pode decidir VOLTAR para mudar a forma de pagamento ou continuar informando a senha e verificando com o BANCO se o cartão e a senha são válidos
+## Exemplo 2
+**Arquivo.jota**
+```
+INICIAR
+PRODUTO frangostoso = 111 COM_PRECO 5.00;
+ESTOQUE frangostoso = 20;
+VENDER frangostoso QUANTIDADE: 1;
+PAGAMENTO PIX APROVADO;
+FINALIZAR
+```
 
-O BANCO vai verificar a partir das informações de um cartão e os valores recebidos se o pagamento seria válido ou não
+**Saída**
+```
+======= Mercadinho do seu Prédinho ======
+Produtos: 1x frangostoso
+Método de pagamento: PIX
+Total da venda: R$ 5.00
+Status: APROVADO
+
+Compra finalizada!
+```
+
+## Exemplo sem estoque
+**Arquivo.jota**
+```
+INICIAR
+PRODUTO frangostoso = 111 COM_PRECO 5.00;
+
+VENDER frangostoso QUANTIDADE: 1;
+PAGAMENTO PIX APROVADO;
+FINALIZAR
+```
+
+**Saída**
+```
+======= Mercadinho do seu Prédinho ======
+Erro: Estoque insuficiente para frangostoso
+Produtos:
+Método de pagamento: PIX
+Total da venda: R$ 0.00
+Status: APROVADO
+
+Compra finalizada!
+```
+
+## Exemplo status RECUSADO
+**Arquivo.jota**
+```
+INICIAR
+PRODUTO frangostoso = 111 COM_PRECO 5.00;
+
+VENDER frangostoso QUANTIDADE: 1;
+PAGAMENTO PIX RECUSADO;
+FINALIZAR
+```
+
+**Saída**
+```
+======= Mercadinho do seu Prédinho ======
+
+Pagamento RECUSADO
+
+Compra finalizada!
+```
+
+## Comandos e sintática
+**INICIAR**
+```
+Inicia o processo de compras da maquininha
+```
+
+**PRODUTO**
+```
+PRODUCT identificador ASSIGN NUMBER WITH_PRICE numero_preco END_LINE
+
+PRODUTO define um produto x com o qr code y e valor z
+```
+
+**ESTOQUE**
+```
+STOCK identificador ASSIGN NUMBER END_LINE
+
+ESTOQUE define a quantidade de unidades de um produto x
+```
+
+**VENDER**
+```
+SELL identificador QUANTITY quantidade END_LINE
+
+VENDER é adicionar o produto no carrinho e receber uma determinada quantidade para esse produto, também diminui o valor definido em ESTOQUE
+```
+
+**PAGAMENTO**
+```
+PAYMENT metodo_pagamento resultado_pagamento END_LINE
+
+O pagamento finaliza tudo se o pagamento foi RECUSADO, caso seja APROVADO, continua para a etapa de FINALIZAR
+```
+
+**FINALIZAR**
+```
+END
+
+Finaliza o processo, caso seja usado antes da linha de PAGAMENTO, vai CANCELAR a compra
+```
+
+## Compilar/Executar
+```
+make
+./caixa_auto < arquivo.jota
+
+O arquivo.jota você pode criar usando algum dos exemplos acima
+```
