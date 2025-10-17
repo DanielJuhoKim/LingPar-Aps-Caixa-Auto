@@ -18,7 +18,7 @@ COMENTARIO \/\/[^\n]*
 
 %%
 
-{COMENTARIO}  { /* Ignorar comentários */ }
+{COMENTARIO}
 
 "INICIAR"    { return START; }
 "FINALIZAR"  { return END; }
@@ -29,39 +29,26 @@ COMENTARIO \/\/[^\n]*
 "CREDITO"    { return CREDIT; }
 "DEBITO"     { return DEBIT; }
 "PIX"        { return PIX; }
-"SE"         { return IF; }
-"ENTAO"      { return THEN; }
-"SENAO"      { return ELSE; }
-"IMPRIMIR"   { return PRINT; }
 
-"COM_PRECO"  { return WITH_PRICE; }
-"QUANTIDADE:" { return QUANTITY; }
+"PRECO"  { return PRICE; }
 "PAGAMENTO_APROVADO" { return PAYMENT_APPROVED; }
 "APROVADO"   { return APROVED; }
 "RECUSADO"   { return REFUSED; }
 
+"="          { return ASSIGN; }
 ":"          { return PROVIDE; }
 "+"          { return PLUS; }
 "-"          { return MINUS; }
-"*"          { return MULT; }
-"/"          { return DIV; }
-"="          { return ASSIGN; }
-"=="         { return EQ; }
-"!="         { return NEQ; }
-">"          { return GT; }
-"<"          { return LT; }
-">="         { return GTE; }
-"<="         { return LTE; }
 ";"          { return END_LINE; }
 
 {NUM}        { yylval.num = atof(yytext); return NUMBER; }
 {STRING}     { yylval.str = strdup(yytext); return STRING; }
 {ID}         { yylval.str = strdup(yytext); return IDENTIFIER; }
 
-[ \t\r\n]+   { /* ignorar espaços, tabs e CR/LF */ }
+[ \t\r\n]+
 
 .            { 
-    printf("[Lexer]: Caractere não reconhecido: '%s'\n", yytext); 
+    printf("[Lexer]: Caractere inválido: '%s'\n", yytext); 
 }
 
 %%

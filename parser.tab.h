@@ -67,28 +67,16 @@ extern int yydebug;
     CREDIT = 268,                  /* CREDIT  */
     DEBIT = 269,                   /* DEBIT  */
     PIX = 270,                     /* PIX  */
-    IF = 271,                      /* IF  */
-    THEN = 272,                    /* THEN  */
-    ELSE = 273,                    /* ELSE  */
-    PRINT = 274,                   /* PRINT  */
-    WITH_PRICE = 275,              /* WITH_PRICE  */
-    QUANTITY = 276,                /* QUANTITY  */
-    PAYMENT_APPROVED = 277,        /* PAYMENT_APPROVED  */
-    APROVED = 278,                 /* APROVED  */
-    REFUSED = 279,                 /* REFUSED  */
-    PROVIDE = 280,                 /* PROVIDE  */
-    PLUS = 281,                    /* PLUS  */
-    MINUS = 282,                   /* MINUS  */
-    MULT = 283,                    /* MULT  */
-    DIV = 284,                     /* DIV  */
-    ASSIGN = 285,                  /* ASSIGN  */
-    EQ = 286,                      /* EQ  */
-    NEQ = 287,                     /* NEQ  */
-    GT = 288,                      /* GT  */
-    LT = 289,                      /* LT  */
-    GTE = 290,                     /* GTE  */
-    LTE = 291,                     /* LTE  */
-    END_LINE = 292                 /* END_LINE  */
+    PRINT = 271,                   /* PRINT  */
+    PRICE = 272,                   /* PRICE  */
+    PAYMENT_APPROVED = 273,        /* PAYMENT_APPROVED  */
+    APROVED = 274,                 /* APROVED  */
+    REFUSED = 275,                 /* REFUSED  */
+    PROVIDE = 276,                 /* PROVIDE  */
+    PLUS = 277,                    /* PLUS  */
+    MINUS = 278,                   /* MINUS  */
+    END_LINE = 279,                /* END_LINE  */
+    ASSIGN = 280                   /* ASSIGN  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -97,13 +85,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 95 "parser.y"
+#line 102 "parser.y"
 
-    double num;
+    int num;
     char* str;
     int bool_val;
 
-#line 107 "parser.tab.h"
+#line 95 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

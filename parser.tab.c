@@ -74,7 +74,6 @@
 #include <string.h>
 #include <unistd.h>
 
-// Tabela de símbolos
 typedef struct {
     char* nome;
     int qr_code;
@@ -82,19 +81,18 @@ typedef struct {
     int estoque;
 } Produto;
 
-// Estrutura para armazenar vendas realizadas
 typedef struct {
     char* nome;
     int quantidade;
     double preco_unitario;
-} Venda;
+} carrinho;
 
 Produto tabela_produtos[100];
 int num_produtos = 0;
 
-Venda vendas_realizadas[100];
+carrinho produtos_carrinho[100];
 int num_vendas = 0;
-double total_venda = 0.0;
+double total_compra = 0.0;
 
 void adicionar_produto(char* nome, int qr_code, double preco, int estoque) {
     if(num_produtos < 100) {
@@ -103,24 +101,6 @@ void adicionar_produto(char* nome, int qr_code, double preco, int estoque) {
         tabela_produtos[num_produtos].preco = preco;
         tabela_produtos[num_produtos].estoque = estoque;
         num_produtos++;
-    }
-}
-
-void adicionar_venda(char* nome, int quantidade, double preco_unitario) {
-    if(num_vendas < 100) {
-        // Verifica se já existe uma venda para este produto
-        for(int i = 0; i < num_vendas; i++) {
-            if(strcmp(vendas_realizadas[i].nome, nome) == 0) {
-                vendas_realizadas[i].quantidade += quantidade;
-                return;
-            }
-        }
-        
-        // Se não existe, adiciona nova venda
-        vendas_realizadas[num_vendas].nome = strdup(nome);
-        vendas_realizadas[num_vendas].quantidade = quantidade;
-        vendas_realizadas[num_vendas].preco_unitario = preco_unitario;
-        num_vendas++;
     }
 }
 
@@ -133,12 +113,39 @@ int encontrar_produto(char* nome) {
     return -1;
 }
 
-// Função para imprimir apenas o resumo da compra
-void imprimir_resumo_compra() {
-    // Imprimir produtos vendidos
+int encontrar_produto_qr(int qr_code) {
+    for(int i = 0; i < num_produtos; i++) {
+        if (tabela_produtos[i].qr_code == qr_code) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void adicionar_venda(int qr_code, int quantidade, double preco_unitario) {
+    if(num_vendas < 100) {
+        int indice = encontrar_produto_qr(qr_code);
+
+        char* nome = tabela_produtos[indice].nome;
+
+        for(int i = 0; i < num_vendas; i++) {
+            if(strcmp(produtos_carrinho[i].nome, nome) == 0) {
+                produtos_carrinho[i].quantidade += quantidade;
+                return;
+            }
+        }
+        
+        produtos_carrinho[num_vendas].nome = strdup(nome);
+        produtos_carrinho[num_vendas].quantidade = quantidade;
+        produtos_carrinho[num_vendas].preco_unitario = preco_unitario;
+        num_vendas++;
+    }
+}
+
+void nota_fiscal() {
     printf("Produtos: ");
     for(int i = 0; i < num_vendas; i++) {
-        printf("%dx %s", vendas_realizadas[i].quantidade, vendas_realizadas[i].nome);
+        printf("%dx %s", produtos_carrinho[i].quantidade, produtos_carrinho[i].nome);
         if(i < num_vendas - 1) {
             printf(", ");
         }
@@ -148,10 +155,10 @@ void imprimir_resumo_compra() {
 
 void limpar_vendas() {
     for(int i = 0; i < num_vendas; i++) {
-        free(vendas_realizadas[i].nome);
+        free(produtos_carrinho[i].nome);
     }
     num_vendas = 0;
-    total_venda = 0.0;
+    total_compra = 0.0;
 }
 
 int yylex(void);
@@ -161,7 +168,7 @@ extern FILE* yyin;
 int pagamento_aprovado = 1;
 
 
-#line 165 "parser.tab.c"
+#line 172 "parser.tab.c"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -205,40 +212,27 @@ enum yysymbol_kind_t
   YYSYMBOL_CREDIT = 13,                    /* CREDIT  */
   YYSYMBOL_DEBIT = 14,                     /* DEBIT  */
   YYSYMBOL_PIX = 15,                       /* PIX  */
-  YYSYMBOL_IF = 16,                        /* IF  */
-  YYSYMBOL_THEN = 17,                      /* THEN  */
-  YYSYMBOL_ELSE = 18,                      /* ELSE  */
-  YYSYMBOL_PRINT = 19,                     /* PRINT  */
-  YYSYMBOL_WITH_PRICE = 20,                /* WITH_PRICE  */
-  YYSYMBOL_QUANTITY = 21,                  /* QUANTITY  */
-  YYSYMBOL_PAYMENT_APPROVED = 22,          /* PAYMENT_APPROVED  */
-  YYSYMBOL_APROVED = 23,                   /* APROVED  */
-  YYSYMBOL_REFUSED = 24,                   /* REFUSED  */
-  YYSYMBOL_PROVIDE = 25,                   /* PROVIDE  */
-  YYSYMBOL_PLUS = 26,                      /* PLUS  */
-  YYSYMBOL_MINUS = 27,                     /* MINUS  */
-  YYSYMBOL_MULT = 28,                      /* MULT  */
-  YYSYMBOL_DIV = 29,                       /* DIV  */
-  YYSYMBOL_ASSIGN = 30,                    /* ASSIGN  */
-  YYSYMBOL_EQ = 31,                        /* EQ  */
-  YYSYMBOL_NEQ = 32,                       /* NEQ  */
-  YYSYMBOL_GT = 33,                        /* GT  */
-  YYSYMBOL_LT = 34,                        /* LT  */
-  YYSYMBOL_GTE = 35,                       /* GTE  */
-  YYSYMBOL_LTE = 36,                       /* LTE  */
-  YYSYMBOL_END_LINE = 37,                  /* END_LINE  */
-  YYSYMBOL_YYACCEPT = 38,                  /* $accept  */
-  YYSYMBOL_programa = 39,                  /* programa  */
-  YYSYMBOL_bloco = 40,                     /* bloco  */
-  YYSYMBOL_declaracao = 41,                /* declaracao  */
-  YYSYMBOL_instrucao = 42,                 /* instrucao  */
-  YYSYMBOL_metodo_pagamento = 43,          /* metodo_pagamento  */
-  YYSYMBOL_resultado_pagamento = 44,       /* resultado_pagamento  */
-  YYSYMBOL_condicao = 45,                  /* condicao  */
-  YYSYMBOL_expressao = 46,                 /* expressao  */
-  YYSYMBOL_identificador = 47,             /* identificador  */
-  YYSYMBOL_numero_preco = 48,              /* numero_preco  */
-  YYSYMBOL_quantidade = 49                 /* quantidade  */
+  YYSYMBOL_PRINT = 16,                     /* PRINT  */
+  YYSYMBOL_PRICE = 17,                     /* PRICE  */
+  YYSYMBOL_PAYMENT_APPROVED = 18,          /* PAYMENT_APPROVED  */
+  YYSYMBOL_APROVED = 19,                   /* APROVED  */
+  YYSYMBOL_REFUSED = 20,                   /* REFUSED  */
+  YYSYMBOL_PROVIDE = 21,                   /* PROVIDE  */
+  YYSYMBOL_PLUS = 22,                      /* PLUS  */
+  YYSYMBOL_MINUS = 23,                     /* MINUS  */
+  YYSYMBOL_END_LINE = 24,                  /* END_LINE  */
+  YYSYMBOL_ASSIGN = 25,                    /* ASSIGN  */
+  YYSYMBOL_YYACCEPT = 26,                  /* $accept  */
+  YYSYMBOL_CAIXA_AUTO = 27,                /* CAIXA_AUTO  */
+  YYSYMBOL_OPERATION = 28,                 /* OPERATION  */
+  YYSYMBOL_STOQUE = 29,                    /* STOQUE  */
+  YYSYMBOL_CARRINHO = 30,                  /* CARRINHO  */
+  YYSYMBOL_PAGAMENTO = 31,                 /* PAGAMENTO  */
+  YYSYMBOL_MAQUININHA = 32,                /* MAQUININHA  */
+  YYSYMBOL_nome_produto = 33,              /* nome_produto  */
+  YYSYMBOL_numero_preco = 34,              /* numero_preco  */
+  YYSYMBOL_quantidade = 35,                /* quantidade  */
+  YYSYMBOL_qr_code = 36                    /* qr_code  */
 };
 typedef enum yysymbol_kind_t yysymbol_kind_t;
 
@@ -566,19 +560,19 @@ union yyalloc
 /* YYFINAL -- State number of the termination state.  */
 #define YYFINAL  4
 /* YYLAST -- Last index in YYTABLE.  */
-#define YYLAST   73
+#define YYLAST   27
 
 /* YYNTOKENS -- Number of terminals.  */
-#define YYNTOKENS  38
+#define YYNTOKENS  26
 /* YYNNTS -- Number of nonterminals.  */
-#define YYNNTS  12
+#define YYNNTS  11
 /* YYNRULES -- Number of rules.  */
-#define YYNRULES  32
+#define YYNRULES  18
 /* YYNSTATES -- Number of states.  */
-#define YYNSTATES  69
+#define YYNSTATES  38
 
 /* YYMAXUTOK -- Last valid token kind.  */
-#define YYMAXUTOK   292
+#define YYMAXUTOK   280
 
 
 /* YYTRANSLATE(TOKEN-NUM) -- Symbol number corresponding to TOKEN-NUM
@@ -620,18 +614,15 @@ static const yytype_int8 yytranslate[] =
        2,     2,     2,     2,     2,     2,     1,     2,     3,     4,
        5,     6,     7,     8,     9,    10,    11,    12,    13,    14,
       15,    16,    17,    18,    19,    20,    21,    22,    23,    24,
-      25,    26,    27,    28,    29,    30,    31,    32,    33,    34,
-      35,    36,    37
+      25
 };
 
 #if YYDEBUG
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_uint8 yyrline[] =
 {
-       0,   119,   119,   125,   126,   127,   131,   134,   143,   160,
-     175,   176,   180,   181,   182,   186,   187,   191,   192,   193,
-     194,   195,   196,   197,   201,   202,   210,   211,   212,   213,
-     223,   226,   229
+       0,   124,   124,   129,   131,   133,   136,   140,   150,   172,
+     189,   191,   193,   196,   198,   200,   202,   204,   206
 };
 #endif
 
@@ -649,12 +640,11 @@ static const char *const yytname[] =
 {
   "\"end of file\"", "error", "\"invalid token\"", "NUMBER", "STRING",
   "IDENTIFIER", "BOOLEAN", "START", "END", "PRODUCT", "STOCK", "SELL",
-  "PAYMENT", "CREDIT", "DEBIT", "PIX", "IF", "THEN", "ELSE", "PRINT",
-  "WITH_PRICE", "QUANTITY", "PAYMENT_APPROVED", "APROVED", "REFUSED",
-  "PROVIDE", "PLUS", "MINUS", "MULT", "DIV", "ASSIGN", "EQ", "NEQ", "GT",
-  "LT", "GTE", "LTE", "END_LINE", "$accept", "programa", "bloco",
-  "declaracao", "instrucao", "metodo_pagamento", "resultado_pagamento",
-  "condicao", "expressao", "identificador", "numero_preco", "quantidade", YY_NULLPTR
+  "PAYMENT", "CREDIT", "DEBIT", "PIX", "PRINT", "PRICE",
+  "PAYMENT_APPROVED", "APROVED", "REFUSED", "PROVIDE", "PLUS", "MINUS",
+  "END_LINE", "ASSIGN", "$accept", "CAIXA_AUTO", "OPERATION", "STOQUE",
+  "CARRINHO", "PAGAMENTO", "MAQUININHA", "nome_produto", "numero_preco",
+  "quantidade", "qr_code", YY_NULLPTR
 };
 
 static const char *
@@ -664,7 +654,7 @@ yysymbol_name (yysymbol_kind_t yysymbol)
 }
 #endif
 
-#define YYPACT_NINF (-33)
+#define YYPACT_NINF (-12)
 
 #define yypact_value_is_default(Yyn) \
   ((Yyn) == YYPACT_NINF)
@@ -678,13 +668,10 @@ yysymbol_name (yysymbol_kind_t yysymbol)
    STATE-NUM.  */
 static const yytype_int8 yypact[] =
 {
-      17,   -33,    16,    11,   -33,   -33,    20,    20,    20,    43,
-       4,   -33,   -33,   -33,    -2,    32,    42,   -33,   -33,   -33,
-     -18,   -33,   -33,    47,     9,   -33,    62,    63,    64,   -33,
-     -33,    31,   -33,    12,    12,    12,    12,    12,    12,    12,
-      12,    12,    12,    49,    33,   -33,    34,   -33,    -8,     5,
-       5,     5,     5,     5,     5,     5,     5,     5,     5,    69,
-     -33,   -33,   -33,   -33,   -33,    36,     2,   -33,   -33
+      -2,   -12,    11,    -8,   -12,   -12,     7,     7,    10,    -7,
+     -12,   -12,   -12,   -11,    -9,   -12,    -6,   -12,   -12,   -12,
+     -10,    14,    15,    16,   -12,   -12,    -4,     4,    -1,   -12,
+       0,   -12,    19,   -12,   -12,   -12,     1,   -12
 };
 
 /* YYDEFACT[STATE-NUM] -- Default reduction number in state STATE-NUM.
@@ -693,26 +680,23 @@ static const yytype_int8 yypact[] =
 static const yytype_int8 yydefact[] =
 {
        0,     3,     0,     0,     1,     2,     0,     0,     0,     0,
-       0,     4,     5,    30,     0,     0,     0,    12,    13,    14,
-       0,    24,    17,     0,     0,    25,     0,     0,     0,    15,
-      16,     0,     3,     0,     0,     0,     0,     0,     0,     0,
-       0,     0,     0,     0,     0,    32,     0,     9,     0,    26,
-      27,    28,    29,    22,    23,    18,    19,    20,    21,     0,
-       7,     8,     3,    10,    31,     0,     0,     6,    11
+       4,     5,    15,     0,     0,    18,     0,    10,    11,    12,
+       0,     0,     0,     0,    13,    14,     0,     0,     0,    17,
+       0,     9,     0,     7,     8,    16,     0,     6
 };
 
 /* YYPGOTO[NTERM-NUM].  */
 static const yytype_int8 yypgoto[] =
 {
-     -33,   -33,   -32,   -33,   -33,   -33,   -33,   -33,    13,    53,
-     -33,   -33
+     -12,   -12,   -12,   -12,   -12,   -12,   -12,    20,   -12,   -12,
+     -12
 };
 
 /* YYDEFGOTO[NTERM-NUM].  */
 static const yytype_int8 yydefgoto[] =
 {
-       0,     2,     3,    11,    12,    20,    31,    23,    24,    25,
-      65,    46
+       0,     2,     3,    10,    11,    20,    26,    13,    36,    30,
+      16
 };
 
 /* YYTABLE[YYPACT[STATE-NUM]] -- What to do in state STATE-NUM.  If
@@ -720,57 +704,40 @@ static const yytype_int8 yydefgoto[] =
    number is the opposite.  If YYTABLE_NINF, syntax error.  */
 static const yytype_int8 yytable[] =
 {
-      48,     6,     7,     8,     9,    29,    30,    21,    10,    13,
-      62,     6,     7,     8,     9,    21,     4,    13,    10,     5,
-       6,     7,     8,     9,     1,    13,    22,    10,    26,    63,
-      66,    33,    34,    35,    36,    33,    34,    35,    36,    68,
-      37,    38,    39,    40,    41,    42,    49,    50,    51,    52,
-      53,    54,    55,    56,    57,    58,    17,    18,    19,    14,
-      15,    16,    27,    28,    32,    43,    44,    45,    47,    59,
-      60,    61,    64,    67
+       5,     6,     7,     8,     9,     1,    17,    18,    19,    24,
+      25,     4,    12,    15,    21,    23,    22,    27,    28,    29,
+      31,    32,    35,    33,    34,    37,     0,    14
 };
 
 static const yytype_int8 yycheck[] =
 {
-      32,     9,    10,    11,    12,    23,    24,     3,    16,     5,
-      18,     9,    10,    11,    12,     3,     0,     5,    16,     8,
-       9,    10,    11,    12,     7,     5,    22,    16,    30,    37,
-      62,    26,    27,    28,    29,    26,    27,    28,    29,    37,
-      31,    32,    33,    34,    35,    36,    33,    34,    35,    36,
-      37,    38,    39,    40,    41,    42,    13,    14,    15,     6,
-       7,     8,    30,    21,    17,     3,     3,     3,    37,    20,
-      37,    37,     3,    37
+       8,     9,    10,    11,    12,     7,    13,    14,    15,    19,
+      20,     0,     5,     3,    25,    21,    25,     3,     3,     3,
+      24,    17,     3,    24,    24,    24,    -1,     7
 };
 
 /* YYSTOS[STATE-NUM] -- The symbol kind of the accessing symbol of
    state STATE-NUM.  */
 static const yytype_int8 yystos[] =
 {
-       0,     7,    39,    40,     0,     8,     9,    10,    11,    12,
-      16,    41,    42,     5,    47,    47,    47,    13,    14,    15,
-      43,     3,    22,    45,    46,    47,    30,    30,    21,    23,
-      24,    44,    17,    26,    27,    28,    29,    31,    32,    33,
-      34,    35,    36,     3,     3,     3,    49,    37,    40,    46,
-      46,    46,    46,    46,    46,    46,    46,    46,    46,    20,
-      37,    37,    18,    37,     3,    48,    40,    37,    37
+       0,     7,    27,    28,     0,     8,     9,    10,    11,    12,
+      29,    30,     5,    33,    33,     3,    36,    13,    14,    15,
+      31,    25,    25,    21,    19,    20,    32,     3,     3,     3,
+      35,    24,    17,    24,    24,     3,    34,    24
 };
 
 /* YYR1[RULE-NUM] -- Symbol kind of the left-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr1[] =
 {
-       0,    38,    39,    40,    40,    40,    41,    41,    42,    42,
-      42,    42,    43,    43,    43,    44,    44,    45,    45,    45,
-      45,    45,    45,    45,    46,    46,    46,    46,    46,    46,
-      47,    48,    49
+       0,    26,    27,    28,    28,    28,    29,    29,    30,    30,
+      31,    31,    31,    32,    32,    33,    34,    35,    36
 };
 
 /* YYR2[RULE-NUM] -- Number of symbols on the right-hand side of rule RULE-NUM.  */
 static const yytype_int8 yyr2[] =
 {
        0,     2,     3,     0,     2,     2,     7,     5,     5,     4,
-       5,     7,     1,     1,     1,     1,     1,     1,     3,     3,
-       3,     3,     3,     3,     1,     1,     3,     3,     3,     3,
-       1,     1,     1
+       1,     1,     1,     1,     1,     1,     1,     1,     1
 };
 
 
@@ -1233,217 +1200,138 @@ yyreduce:
   YY_REDUCE_PRINT (yyn);
   switch (yyn)
     {
-  case 2: /* programa: START bloco END  */
-#line 119 "parser.y"
-                    { 
+  case 2: /* CAIXA_AUTO: START OPERATION END  */
+#line 124 "parser.y"
+                        { 
         printf("\nCompra finalizada!\n"); 
         return 0; 
     }
-#line 1243 "parser.tab.c"
+#line 1210 "parser.tab.c"
     break;
 
-  case 6: /* declaracao: PRODUCT identificador ASSIGN NUMBER WITH_PRICE numero_preco END_LINE  */
-#line 131 "parser.y"
-                                                                         {
+  case 6: /* STOQUE: PRODUCT nome_produto ASSIGN NUMBER PRICE numero_preco END_LINE  */
+#line 136 "parser.y"
+                                                                   {
         adicionar_produto((yyvsp[-5].str), (int)(yyvsp[-3].num), (yyvsp[-1].num), 0);
     }
-#line 1251 "parser.tab.c"
+#line 1218 "parser.tab.c"
     break;
 
-  case 7: /* declaracao: STOCK identificador ASSIGN NUMBER END_LINE  */
-#line 134 "parser.y"
-                                                 {
-        int idx = encontrar_produto((yyvsp[-3].str));
-        if(idx >= 0) {
-            tabela_produtos[idx].estoque = (int)(yyvsp[-1].num);
+  case 7: /* STOQUE: STOCK nome_produto ASSIGN NUMBER END_LINE  */
+#line 140 "parser.y"
+                                              {
+        int indice = encontrar_produto((yyvsp[-3].str));
+
+        if(indice >= 0) {
+            tabela_produtos[indice].estoque = (int)(yyvsp[-1].num);
         }
+
     }
-#line 1262 "parser.tab.c"
+#line 1231 "parser.tab.c"
     break;
 
-  case 8: /* instrucao: SELL identificador QUANTITY quantidade END_LINE  */
-#line 143 "parser.y"
-                                                    {
-        int idx = encontrar_produto((yyvsp[-3].str));
-        if(idx >= 0) {
-            if(tabela_produtos[idx].estoque >= (int)(yyvsp[-1].num)) {
-                double valor_venda = tabela_produtos[idx].preco * (yyvsp[-1].num);
-                total_venda += valor_venda;
-                tabela_produtos[idx].estoque -= (int)(yyvsp[-1].num);
+  case 8: /* CARRINHO: SELL qr_code PROVIDE quantidade END_LINE  */
+#line 150 "parser.y"
+                                             {
+        int indice = encontrar_produto_qr((yyvsp[-3].num));
+
+        if(indice >= 0) {
+            if(tabela_produtos[indice].estoque >= (int)(yyvsp[-1].num)) {
+                double valor_venda = tabela_produtos[indice].preco * (yyvsp[-1].num);
+                total_compra += valor_venda;
+                tabela_produtos[indice].estoque -= (int)(yyvsp[-1].num);
                 
-                // ADICIONAR VENDA À LISTA DE VENDAS REALIZADAS
-                adicionar_venda((yyvsp[-3].str), (int)(yyvsp[-1].num), tabela_produtos[idx].preco);
-            } else {
-                printf("Erro: Estoque insuficiente para %s\n", (yyvsp[-3].str));
+                adicionar_venda((yyvsp[-3].num), (int)(yyvsp[-1].num), tabela_produtos[indice].preco);
             }
-        } else {
-            printf("Erro: Produto %s não encontrado\n", (yyvsp[-3].str));
+
+            else {
+                printf("Erro: Estoque insuficiente\n");
+            }
+        }
+
+        else {
+            printf("Erro: Produto %d não encontrado\n", (yyvsp[-3].num));
         }
     }
-#line 1284 "parser.tab.c"
+#line 1257 "parser.tab.c"
     break;
 
-  case 9: /* instrucao: PAYMENT metodo_pagamento resultado_pagamento END_LINE  */
-#line 160 "parser.y"
-                                                            {
-        // VERIFICAR SE O PAGAMENTO FOI APROVADO ANTES DE IMPRIMIR O RESUMO
+  case 9: /* CARRINHO: PAYMENT PAGAMENTO MAQUININHA END_LINE  */
+#line 172 "parser.y"
+                                          {
         if (strcmp((yyvsp[-1].str), "APROVADO") == 0) {
-            imprimir_resumo_compra();
+            nota_fiscal();
             printf("Método de pagamento: %s\n", (yyvsp[-2].str));
-            printf("Total da venda: R$ %.2f\n", total_venda);
+            printf("Total da venda: R$ %.2f\n", total_compra);
             printf("Status: %s\n", (yyvsp[-1].str));
-        } else {
+        }
+        
+        else {
             printf("\nPagamento %s\n", (yyvsp[-1].str));
         }
         
-        // Reset para próxima compra
         limpar_vendas();
         num_produtos = 0;
     }
-#line 1304 "parser.tab.c"
+#line 1277 "parser.tab.c"
     break;
 
-  case 12: /* metodo_pagamento: CREDIT  */
-#line 180 "parser.y"
+  case 10: /* PAGAMENTO: CREDIT  */
+#line 189 "parser.y"
            { (yyval.str) = "CRÉDITO"; }
-#line 1310 "parser.tab.c"
+#line 1283 "parser.tab.c"
     break;
 
-  case 13: /* metodo_pagamento: DEBIT  */
-#line 181 "parser.y"
-            { (yyval.str) = "DÉBITO"; }
-#line 1316 "parser.tab.c"
-    break;
-
-  case 14: /* metodo_pagamento: PIX  */
-#line 182 "parser.y"
-          { (yyval.str) = "PIX"; }
-#line 1322 "parser.tab.c"
-    break;
-
-  case 15: /* resultado_pagamento: APROVED  */
-#line 186 "parser.y"
-            { (yyval.str) = "APROVADO"; }
-#line 1328 "parser.tab.c"
-    break;
-
-  case 16: /* resultado_pagamento: REFUSED  */
-#line 187 "parser.y"
-              { (yyval.str) = "RECUSADO"; }
-#line 1334 "parser.tab.c"
-    break;
-
-  case 17: /* condicao: PAYMENT_APPROVED  */
+  case 11: /* PAGAMENTO: DEBIT  */
 #line 191 "parser.y"
-                     { (yyval.bool_val) = pagamento_aprovado; }
-#line 1340 "parser.tab.c"
+          { (yyval.str) = "DÉBITO"; }
+#line 1289 "parser.tab.c"
     break;
 
-  case 18: /* condicao: expressao GT expressao  */
-#line 192 "parser.y"
-                             { (yyval.bool_val) = (yyvsp[-2].num) > (yyvsp[0].num); }
-#line 1346 "parser.tab.c"
-    break;
-
-  case 19: /* condicao: expressao LT expressao  */
+  case 12: /* PAGAMENTO: PIX  */
 #line 193 "parser.y"
-                             { (yyval.bool_val) = (yyvsp[-2].num) < (yyvsp[0].num); }
-#line 1352 "parser.tab.c"
+        { (yyval.str) = "PIX"; }
+#line 1295 "parser.tab.c"
     break;
 
-  case 20: /* condicao: expressao GTE expressao  */
-#line 194 "parser.y"
-                              { (yyval.bool_val) = (yyvsp[-2].num) >= (yyvsp[0].num); }
-#line 1358 "parser.tab.c"
-    break;
-
-  case 21: /* condicao: expressao LTE expressao  */
-#line 195 "parser.y"
-                              { (yyval.bool_val) = (yyvsp[-2].num) <= (yyvsp[0].num); }
-#line 1364 "parser.tab.c"
-    break;
-
-  case 22: /* condicao: expressao EQ expressao  */
+  case 13: /* MAQUININHA: APROVED  */
 #line 196 "parser.y"
-                             { (yyval.bool_val) = (yyvsp[-2].num) == (yyvsp[0].num); }
-#line 1370 "parser.tab.c"
+            { (yyval.str) = "APROVADO"; }
+#line 1301 "parser.tab.c"
     break;
 
-  case 23: /* condicao: expressao NEQ expressao  */
-#line 197 "parser.y"
-                              { (yyval.bool_val) = (yyvsp[-2].num) != (yyvsp[0].num); }
-#line 1376 "parser.tab.c"
+  case 14: /* MAQUININHA: REFUSED  */
+#line 198 "parser.y"
+            { (yyval.str) = "RECUSADO"; }
+#line 1307 "parser.tab.c"
     break;
 
-  case 24: /* expressao: NUMBER  */
-#line 201 "parser.y"
-           { (yyval.num) = (yyvsp[0].num); }
-#line 1382 "parser.tab.c"
+  case 15: /* nome_produto: IDENTIFIER  */
+#line 200 "parser.y"
+                         { (yyval.str) = (yyvsp[0].str); }
+#line 1313 "parser.tab.c"
     break;
 
-  case 25: /* expressao: identificador  */
+  case 16: /* numero_preco: NUMBER  */
 #line 202 "parser.y"
-                    {
-        int idx = encontrar_produto((yyvsp[0].str));
-        if(idx >= 0) {
-            (yyval.num) = tabela_produtos[idx].preco;
-        } else {
-            (yyval.num) = 0;
-        }
-    }
-#line 1395 "parser.tab.c"
-    break;
-
-  case 26: /* expressao: expressao PLUS expressao  */
-#line 210 "parser.y"
-                               { (yyval.num) = (yyvsp[-2].num) + (yyvsp[0].num); }
-#line 1401 "parser.tab.c"
-    break;
-
-  case 27: /* expressao: expressao MINUS expressao  */
-#line 211 "parser.y"
-                                { (yyval.num) = (yyvsp[-2].num) - (yyvsp[0].num); }
-#line 1407 "parser.tab.c"
-    break;
-
-  case 28: /* expressao: expressao MULT expressao  */
-#line 212 "parser.y"
-                               { (yyval.num) = (yyvsp[-2].num) * (yyvsp[0].num); }
-#line 1413 "parser.tab.c"
-    break;
-
-  case 29: /* expressao: expressao DIV expressao  */
-#line 213 "parser.y"
-                              { 
-        if((yyvsp[0].num) != 0) {
-            (yyval.num) = (yyvsp[-2].num) / (yyvsp[0].num); 
-        } else {
-            (yyval.num) = 0;
-        }
-    }
-#line 1425 "parser.tab.c"
-    break;
-
-  case 30: /* identificador: IDENTIFIER  */
-#line 223 "parser.y"
-                          { (yyval.str) = (yyvsp[0].str); }
-#line 1431 "parser.tab.c"
-    break;
-
-  case 31: /* numero_preco: NUMBER  */
-#line 226 "parser.y"
                      { (yyval.num) = (yyvsp[0].num); }
-#line 1437 "parser.tab.c"
+#line 1319 "parser.tab.c"
     break;
 
-  case 32: /* quantidade: NUMBER  */
-#line 229 "parser.y"
+  case 17: /* quantidade: NUMBER  */
+#line 204 "parser.y"
                    { (yyval.num) = (yyvsp[0].num); }
-#line 1443 "parser.tab.c"
+#line 1325 "parser.tab.c"
+    break;
+
+  case 18: /* qr_code: NUMBER  */
+#line 206 "parser.y"
+                { (yyval.num) = (yyvsp[0].num); }
+#line 1331 "parser.tab.c"
     break;
 
 
-#line 1447 "parser.tab.c"
+#line 1335 "parser.tab.c"
 
       default: break;
     }
@@ -1636,7 +1524,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 232 "parser.y"
+#line 208 "parser.y"
 
 
 void yyerror(const char *s) {
@@ -1647,7 +1535,6 @@ int main(int argc, char *argv[]) {
     printf("======= Mercadinho do seu Prédinho ======\n");
     
     if (argc > 1) {
-        // Modo arquivo como argumento
         FILE* file = fopen(argv[1], "r");
         if(!file) {
             fprintf(stderr, "Erro: Não foi possível abrir o arquivo %s\n", argv[1]);
@@ -1655,7 +1542,6 @@ int main(int argc, char *argv[]) {
         }
         yyin = file;
     } else {
-        // Modo redirecionamento ou interativo
         yyin = stdin;
     }
     
