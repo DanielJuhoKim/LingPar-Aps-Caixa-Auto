@@ -1235,8 +1235,8 @@ yyreduce:
                                              {
         int indice = encontrar_produto_qr((yyvsp[-3].num));
 
-        if(indice >= 0) {
-            if(tabela_produtos[indice].estoque >= (int)(yyvsp[-1].num)) {
+        if (indice >= 0) {
+            if (tabela_produtos[indice].estoque >= (int)(yyvsp[-1].num)) {
                 double valor_venda = tabela_produtos[indice].preco * (yyvsp[-1].num);
                 total_compra += valor_venda;
                 tabela_produtos[indice].estoque -= (int)(yyvsp[-1].num);
@@ -1245,7 +1245,7 @@ yyreduce:
             }
 
             else {
-                printf("Erro: Estoque insuficiente\n");
+                printf("Erro: Estoque do produto %d insuficiente\n\n", (yyvsp[-3].num));
             }
         }
 

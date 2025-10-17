@@ -150,8 +150,8 @@ CARRINHO:
     SELL qr_code PROVIDE quantidade END_LINE {
         int indice = encontrar_produto_qr($2);
 
-        if(indice >= 0) {
-            if(tabela_produtos[indice].estoque >= (int)$4) {
+        if (indice >= 0) {
+            if (tabela_produtos[indice].estoque >= (int)$4) {
                 double valor_venda = tabela_produtos[indice].preco * $4;
                 total_compra += valor_venda;
                 tabela_produtos[indice].estoque -= (int)$4;
@@ -160,7 +160,7 @@ CARRINHO:
             }
 
             else {
-                printf("Erro: Estoque insuficiente\n");
+                printf("Erro: Estoque do produto %d insuficiente\n\n", $2);
             }
         }
 
