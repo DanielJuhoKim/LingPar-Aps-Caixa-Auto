@@ -55,28 +55,51 @@ extern int yydebug;
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
     NUMBER = 258,                  /* NUMBER  */
-    STRING = 259,                  /* STRING  */
-    IDENTIFIER = 260,              /* IDENTIFIER  */
-    BOOLEAN = 261,                 /* BOOLEAN  */
+    DECIMAL = 259,                 /* DECIMAL  */
+    STRING = 260,                  /* STRING  */
+    IDENTIFIER = 261,              /* IDENTIFIER  */
     START = 262,                   /* START  */
     END = 263,                     /* END  */
     PRODUCT = 264,                 /* PRODUCT  */
     STOCK = 265,                   /* STOCK  */
-    SELL = 266,                    /* SELL  */
-    PAYMENT = 267,                 /* PAYMENT  */
-    CREDIT = 268,                  /* CREDIT  */
-    DEBIT = 269,                   /* DEBIT  */
-    PIX = 270,                     /* PIX  */
-    PRINT = 271,                   /* PRINT  */
-    PRICE = 272,                   /* PRICE  */
-    PAYMENT_APPROVED = 273,        /* PAYMENT_APPROVED  */
-    APROVED = 274,                 /* APROVED  */
-    REFUSED = 275,                 /* REFUSED  */
-    PROVIDE = 276,                 /* PROVIDE  */
-    PLUS = 277,                    /* PLUS  */
-    MINUS = 278,                   /* MINUS  */
-    END_LINE = 279,                /* END_LINE  */
-    ASSIGN = 280                   /* ASSIGN  */
+    DEPOSIT = 266,                 /* DEPOSIT  */
+    CREATE_CART = 267,             /* CREATE_CART  */
+    CART = 268,                    /* CART  */
+    SELL = 269,                    /* SELL  */
+    PAYMENT = 270,                 /* PAYMENT  */
+    CREDIT = 271,                  /* CREDIT  */
+    DEBIT = 272,                   /* DEBIT  */
+    PIX = 273,                     /* PIX  */
+    SCAN = 274,                    /* SCAN  */
+    INCREASE = 275,                /* INCREASE  */
+    CONSULT = 276,                 /* CONSULT  */
+    CREATE_DEPOSIT = 277,          /* CREATE_DEPOSIT  */
+    GUARD = 278,                   /* GUARD  */
+    APROVED = 279,                 /* APROVED  */
+    REFUSED = 280,                 /* REFUSED  */
+    PRICE = 281,                   /* PRICE  */
+    IF = 282,                      /* IF  */
+    WHILE = 283,                   /* WHILE  */
+    STOP = 284,                    /* STOP  */
+    AND = 285,                     /* AND  */
+    OR = 286,                      /* OR  */
+    PROVIDE = 287,                 /* PROVIDE  */
+    PLUS = 288,                    /* PLUS  */
+    MULT = 289,                    /* MULT  */
+    MINUS = 290,                   /* MINUS  */
+    DIV = 291,                     /* DIV  */
+    END_LINE = 292,                /* END_LINE  */
+    ASSIGN = 293,                  /* ASSIGN  */
+    COLCH_OPEN = 294,              /* COLCH_OPEN  */
+    COLCH_CLOSE = 295,             /* COLCH_CLOSE  */
+    KEY_OPEN = 296,                /* KEY_OPEN  */
+    KEY_CLOSE = 297,               /* KEY_CLOSE  */
+    LESSER = 298,                  /* LESSER  */
+    LESSER_EQUAL = 299,            /* LESSER_EQUAL  */
+    GREATER = 300,                 /* GREATER  */
+    GREATER_EQUAL = 301,           /* GREATER_EQUAL  */
+    EQUAL = 302,                   /* EQUAL  */
+    UMINUS = 303                   /* UMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -85,13 +108,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 102 "parser.y"
+#line 275 "parser.y"
 
     int num;
+    double dbl;
     char* str;
-    int bool_val;
 
-#line 95 "parser.tab.h"
+#line 118 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

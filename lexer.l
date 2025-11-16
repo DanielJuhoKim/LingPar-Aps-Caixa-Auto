@@ -5,12 +5,14 @@
 #include <stdlib.h>
 
 extern FILE* yyin;
+
 %}
 
 DIGIT    [0-9]
 CHAR     [a-zA-Z_]
 ID       {CHAR}({CHAR}|{DIGIT})*
 NUM      {DIGIT}+(\.{DIGIT}+)?
+DECIMAL  {DIGIT}+\.{DIGIT}+
 STRING   \"([^\"\\]|\\.)*\"
 COMENTARIO \/\/[^\n]*
 
@@ -24,24 +26,49 @@ COMENTARIO \/\/[^\n]*
 "FINALIZAR"  { return END; }
 "PRODUTO"    { return PRODUCT; }
 "ESTOQUE"    { return STOCK; }
+"DEPOSITO"   { return DEPOSIT; }
+"CRIAR_CARRINHO" {return CREATE_CART; }
+"CRIAR_DEPOSITO" { return CREATE_DEPOSIT; }
+"GUARDAR"    { return GUARD; }
+"CARRINHO"   { return CART; }
 "VENDER"     { return SELL; }
 "PAGAMENTO"  { return PAYMENT; }
+"ADICIONAR"  { return INCREASE; }
 "CREDITO"    { return CREDIT; }
 "DEBITO"     { return DEBIT; }
 "PIX"        { return PIX; }
+"SCANEAR"    { return SCAN; }
+"CONSULTAR"  { return CONSULT; }
 
-"PRECO"  { return PRICE; }
-"PAGAMENTO_APROVADO" { return PAYMENT_APPROVED; }
+"PRECO"      { return PRICE; }
 "APROVADO"   { return APROVED; }
 "RECUSADO"   { return REFUSED; }
+
+"VERIFICAR"   {return IF; }
+"VERIFICAR_CONSTANTEMENTE"   {return WHILE; }
+"@@"  { return STOP; }
+"ALEM_DE"   { return AND; }
+"OU"    {return OR; }
 
 "="          { return ASSIGN; }
 ":"          { return PROVIDE; }
 "+"          { return PLUS; }
+"*"          { return MULT; }
+"/"          { return DIV; }
 "-"          { return MINUS; }
 ";"          { return END_LINE; }
+"["          { return COLCH_OPEN; }
+">"         { return GREATER; }
+"<"         { return LESSER; }
+">="         { return GREATER_EQUAL; }
+"<="         { return LESSER_EQUAL; }
+"=="         { return EQUAL; }
+"]"          { return COLCH_CLOSE; }
+"{"          { return KEY_OPEN; }
+"}"          { return KEY_CLOSE; }
 
-{NUM}        { yylval.num = atof(yytext); return NUMBER; }
+{DECIMAL}    { yylval.dbl = atof(yytext); return DECIMAL; }
+{NUM}        { yylval.num = atoi(yytext); return NUMBER; }
 {STRING}     { yylval.str = strdup(yytext); return STRING; }
 {ID}         { yylval.str = strdup(yytext); return IDENTIFIER; }
 
