@@ -39,6 +39,7 @@ COMENTARIO \/\/[^\n]*
 "PIX"        { return PIX; }
 "SCANEAR"    { return SCAN; }
 "CONSULTAR"  { return CONSULT; }
+"MENSAGEM"   { return MESSAGE; }
 
 "PRECO"      { return PRICE; }
 "APROVADO"   { return APROVED; }
@@ -66,6 +67,8 @@ COMENTARIO \/\/[^\n]*
 "]"          { return COLCH_CLOSE; }
 "{"          { return KEY_OPEN; }
 "}"          { return KEY_CLOSE; }
+"("          { return PAR_OPEN; }
+")"          { return PAR_CLOSE; }
 
 {DECIMAL}    { yylval.dbl = atof(yytext); return DECIMAL; }
 {NUM}        { yylval.num = atoi(yytext); return NUMBER; }

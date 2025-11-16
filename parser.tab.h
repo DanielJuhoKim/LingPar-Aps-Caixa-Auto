@@ -75,31 +75,34 @@ extern int yydebug;
     CONSULT = 276,                 /* CONSULT  */
     CREATE_DEPOSIT = 277,          /* CREATE_DEPOSIT  */
     GUARD = 278,                   /* GUARD  */
-    APROVED = 279,                 /* APROVED  */
-    REFUSED = 280,                 /* REFUSED  */
-    PRICE = 281,                   /* PRICE  */
-    IF = 282,                      /* IF  */
-    WHILE = 283,                   /* WHILE  */
-    STOP = 284,                    /* STOP  */
-    AND = 285,                     /* AND  */
-    OR = 286,                      /* OR  */
-    PROVIDE = 287,                 /* PROVIDE  */
-    PLUS = 288,                    /* PLUS  */
-    MULT = 289,                    /* MULT  */
-    MINUS = 290,                   /* MINUS  */
-    DIV = 291,                     /* DIV  */
-    END_LINE = 292,                /* END_LINE  */
-    ASSIGN = 293,                  /* ASSIGN  */
-    COLCH_OPEN = 294,              /* COLCH_OPEN  */
-    COLCH_CLOSE = 295,             /* COLCH_CLOSE  */
-    KEY_OPEN = 296,                /* KEY_OPEN  */
-    KEY_CLOSE = 297,               /* KEY_CLOSE  */
-    LESSER = 298,                  /* LESSER  */
-    LESSER_EQUAL = 299,            /* LESSER_EQUAL  */
-    GREATER = 300,                 /* GREATER  */
-    GREATER_EQUAL = 301,           /* GREATER_EQUAL  */
-    EQUAL = 302,                   /* EQUAL  */
-    UMINUS = 303                   /* UMINUS  */
+    MESSAGE = 279,                 /* MESSAGE  */
+    APROVED = 280,                 /* APROVED  */
+    REFUSED = 281,                 /* REFUSED  */
+    PRICE = 282,                   /* PRICE  */
+    IF = 283,                      /* IF  */
+    WHILE = 284,                   /* WHILE  */
+    STOP = 285,                    /* STOP  */
+    AND = 286,                     /* AND  */
+    OR = 287,                      /* OR  */
+    PROVIDE = 288,                 /* PROVIDE  */
+    PLUS = 289,                    /* PLUS  */
+    MULT = 290,                    /* MULT  */
+    MINUS = 291,                   /* MINUS  */
+    DIV = 292,                     /* DIV  */
+    END_LINE = 293,                /* END_LINE  */
+    ASSIGN = 294,                  /* ASSIGN  */
+    COLCH_OPEN = 295,              /* COLCH_OPEN  */
+    COLCH_CLOSE = 296,             /* COLCH_CLOSE  */
+    KEY_OPEN = 297,                /* KEY_OPEN  */
+    KEY_CLOSE = 298,               /* KEY_CLOSE  */
+    PAR_OPEN = 299,                /* PAR_OPEN  */
+    PAR_CLOSE = 300,               /* PAR_CLOSE  */
+    LESSER = 301,                  /* LESSER  */
+    LESSER_EQUAL = 302,            /* LESSER_EQUAL  */
+    GREATER = 303,                 /* GREATER  */
+    GREATER_EQUAL = 304,           /* GREATER_EQUAL  */
+    EQUAL = 305,                   /* EQUAL  */
+    UMINUS = 306                   /* UMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -108,13 +111,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 275 "parser.y"
+#line 525 "parser.y"
 
     int num;
     double dbl;
     char* str;
 
-#line 118 "parser.tab.h"
+#line 121 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;
