@@ -1,230 +1,196 @@
 # Caixa Eletrônico Automático
 
 ```
-CAIXA_AUTO = "INICIAR", OPERATION, "FINALIZAR" ;
+CAIXA_AUTO = "INICIAR", {OPERATION}, "FINALIZAR" ;
 
-OPERATION =
+OPERATION = 
+    STOQUE
     |
-    OPERATION, STOQUE
+    DEPOSITO_OPERATION
     |
-    OPERATION, CARRINHO ;
+    CART_OPERATION
+    |
+    VENDA
+    |
+    CONDITIONAL
+    |
+    WHILE_LOOP
+    |
+    VARIAVEL_OPERATION
+    |
+    MENSAGEM ;
 
-STOQUE =
-    "PRODUTO", nome_produto, "=", NUMBER, "PRECO", numero_preco, ";"
-    |
-    "ESTOQUE", nome_produto, "=", NUMBER, ";"
+STOQUE = "PRODUTO", nome_produto, "=", qr_code, "PRECO", EXPRESSAO, ";" ;
 
-CARRINHO =
-    "VENDER", qr_code, ":", quantidade, ";"
+DEPOSITO_OPERATION = nome_deposito, "[", "PRODUTO", qr_code, "]", ":", "ADICIONAR", EXPRESSAO, ";" ;
+
+CART_OPERATION = nome_carrinho, "ADICIONAR", nome_deposito, "[", qr_code, "]", ":", EXPRESSAO, ";" ;
+
+VENDA = "VENDER", nome_carrinho, "[", qr_code, "]", "SCANEAR", EXPRESSAO, ";"
     |
-    "PAGAMENTO", PAGAMENTO, MAQUININHA, ";"
+    "PAGAMENTO", PAGAMENTO, MAQUININHA, ";" ;
+
+CONDITIONAL = "VERIFICAR", EXPRESSAO, OPERATION, "@@" ;
+
+WHILE_LOOP = "VERIFICAR_CONSTANTEMENTE", EXPRESSAO, OPERATION, "$$" ;
+
+VARIAVEL_OPERATION = "GUARDAR", nome_variavel, "=", EXPRESSAO, ";"
+    |
+    "GUARDAR", nome_variavel, ";"
+    |
+    nome_variavel, "=", EXPRESSAO, ";"
+    |
+    "CONSULTAR", nome_variavel, ";"
+    |
+    "CONSULTAR", qr_code, ";"
+    |
+    "CONSULTAR", "CARRINHO", nome_carrinho, "[", qr_code, "]", ";"
+    |
+    "CONSULTAR", "CARRINHO", nome_carrinho, ";"
+    |
+    "CONSULTAR", "DEPOSITO", nome_deposito, "[", qr_code, "]", ";" ;
+
+MENSAGEM = "MENSAGEM", "(", STRING, ")", ";" ;
+
+EXPRESSAO = 
+    NUMBER
+    |
+    DECIMAL
+    |
+    "PRODUTO", qr_code
+    |
+    nome_variavel
+    |
+    EXPRESSAO, ("*" | "/" | "+" | "-"), EXPRESSAO
+    |
+    EXPRESSAO, ("<" | "<=" | ">" | ">=" | "=="), EXPRESSAO
+    |
+    EXPRESSAO, ("ALEM_DE" | "OU"), EXPRESSAO ;
 
 PAGAMENTO = "CREDITO" | "DEBITO" | "PIX" ;
-
 MAQUININHA = "APROVADO" | "RECUSADO" ;
 
 nome_produto = IDENTIFIER ;
-numero_preco = NUMBER ;
-quantidade = NUMBER ;
+nome_variavel = IDENTIFIER ;
+nome_deposito = IDENTIFIER ;
+nome_carrinho = IDENTIFIER ;
 qr_code = NUMBER ;
+quantidade = NUMBER ;
 
 IDENTIFIER = LETTER, { LETTER | DIGIT | "_" } ;
-NUMBER = DIGIT, { DIGIT }, [ ".", DIGIT, { DIGIT } ] ;
+NUMBER = DIGIT, { DIGIT } ;
+DECIMAL = DIGIT, { DIGIT }, ".", DIGIT, { DIGIT } ;
+STRING = '"', { qualquer_caractere_exceto_aspas }, '"' ;
 
 LETTER = "a" | "b" | "c" | ... | "z" | "A" | "B" | ... | "Z" | "_" ;
 DIGIT = "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9" ;
-
-START = "INICIAR" ;
-END = "FINALIZAR" ;
-PRODUCT = "PRODUTO" ;
-STOCK = "ESTOQUE" ;
-SELL = "VENDER" ;
-PAYMENT = "PAGAMENTO" ;
-CREDIT = "CREDITO" ;
-DEBIT = "DEBITO" ;
-PIX = "PIX" ;
-PRICE = "PRECO" ;
-APROVED = "APROVADO" ;
-REFUSED = "RECUSADO" ;
-ASSIGN = "=" ;
-PROVIDE = ":" ;
-END_LINE = ";" ;
-
-WHITESPACE = " " | "\t" | "\r" | "\n" ;
-COMMENT = "//", { qualquer_caractere_exceto_"\n" } ;
 ```
 
-Essa EBNF representa a linguagem de um caixa eletrônico automático de um mercadinho de um prédio, onde a partir dele, os residentes podem comprar os produtos ao passar os QR code dos produtos e realizar o pagamento
+Linguagem de programação que pode ser usada para fazer simulações de um caixa eletrônico automático de um mercadinho de um prédio, onde a partir dele, podemos simular como seria o processo de um residente fazer compras no mercadinho do prédio e como seriam guardados os produtos no depósito/armazem do prédio
 
-## Exemplo 1
-**Arquivo.jota**
-```
-INICIAR
-
-PRODUTO arroz = 732 PRECO 10.00;
-PRODUTO feijao = 123 PRECO 8.00;
-PRODUTO carne = 456 PRECO 25.00;
-
-ESTOQUE arroz = 50;
-ESTOQUE feijao = 30;
-ESTOQUE carne = 20;
-
-VENDER 732 : 2;
-VENDER 123 : 1;
-VENDER 456 : 1;
-
-PAGAMENTO PIX APROVADO;
-FINALIZAR
-```
-
-**Saída**
-```
-======= Mercadinho do seu Prédinho ======
-Produtos: 2x arroz, 1x feijao, 1x carne
-Método de pagamento: PIX
-Total da venda: R$ 53.00
-Status: APROVADO
-
-Compra finalizada!
-```
-
-## Exemplo 2
-**Arquivo.jota**
-```
-INICIAR
-
-PRODUTO frangostoso = 737 PRECO 10.00;
-
-ESTOQUE frangostoso = 20;
-
-VENDER 737 : 2;
-
-PAGAMENTO PIX APROVADO;
-FINALIZAR
-```
-
-**Saída**
-```
-======= Mercadinho do seu Prédinho ======
-Produtos: 2x frangostoso
-Método de pagamento: PIX
-Total da venda: R$ 20.00
-Status: APROVADO
-
-Compra finalizada!
-```
-
-## Exemplo sem estoque
-**Arquivo.jota**
-```
-INICIAR
-
-PRODUTO frangostoso = 737 PRECO 10.00;
-
-ESTOQUE frangostoso = 20;
-
-VENDER 737 : 30;
-
-PAGAMENTO PIX APROVADO;
-FINALIZAR
-```
-
-**Saída**
-```
-======= Mercadinho do seu Prédinho ======
-Erro: Estoque do produto 737 insuficiente
-
-Produtos:
-Método de pagamento: PIX
-Total da venda: R$ 0.00
-Status: APROVADO
-
-Compra finalizada!
-```
-
-## Exemplo status RECUSADO
-**Arquivo.jota**
-```
-INICIAR
-
-PRODUTO frangostoso = 737 PRECO 10.00;
-
-ESTOQUE frangostoso = 20;
-
-VENDER 737 : 30;
-
-PAGAMENTO PIX RECUSADO;
-FINALIZAR
-```
-
-**Saída**
-```
-======= Mercadinho do seu Prédinho ======
-Erro: Estoque do produto 737 insuficiente
-
-
-Pagamento RECUSADO
-
-Compra finalizada!
-```
 
 ## Comandos | Sintática | Exemplo
 **INICIAR**
 ```
-START OPERATION END
+START OPERATIONS END
 
 INICIAR
 
-Inicia o processo de compras da maquininha
+Instrução que inicializa o processo de compras da maquininha
 ```
 
 **PRODUTO**
 ```
-PRODUCT nome_produto ASSIGN NUMBER PRICE numero_preco END_LINE
+PRODUCT nome_produto ASSIGN NUMBER PRICE EXPRESSAO END_LINE
 
-PRODUTO carne = 456 PRECO 25.00;
+PRODUTO cookie = 137 PRECO 7;
 
-PRODUTO define um produto x com o qr code y e valor z
+Registrador que guarda informações sobre um determinado produto com um QR-Code de preço X
 ```
 
-**ESTOQUE**
+**DEPOSITO/CRIAR_DEPOSITO/CONSULTAR DEPOSITO**
 ```
-STOCK nome_produto ASSIGN NUMBER END_LINE
+CREATE_DEPOSIT nome_deposito PROVIDE KEY_OPEN KEY_CLOSE END_LINE
 
-ESTOQUE arroz = 50;
+CRIAR_DEPOSITO depositoCondominio7 : {};
 
-ESTOQUE define a quantidade de unidades de um produto x
+Cria depósito onde guardamos produtos e determinamos a quantidade desses produtos que vão estar presentes no depósito/armazém
+
+CONSULT DEPOSIT nome_deposito COLCH_OPEN qr_code COLCH_CLOSE END_LINE
+
+CONSULTAR DEPOSITO depositoCondominio7[137];
+
+Verificamos a quantidade de unidades de um produto QR-Code no depósito
+
+nome_deposito COLCH_OPEN PRODUCT qr_code COLCH_CLOSE PROVIDE INCREASE EXPRESSAO END_LINE
+
+depositoCondominio7 [PRODUTO 137] : ADICIONAR 40;
+
+Adicionamos uma quantidade X unidades de um determinado produto em um depósito já existente
+```
+
+**CARRINHO/CRIAR_CARRINHO/CONSULTAR CARRINHO**
+```
+CRIAR_CARRINHO carrinhoJoao : [];
+
+Cria um carrinho que vamos guardar produtos que existem em um depósito existente
+
+carrinhoJoao ADICIONAR depositoCondominio7 [137] : 7;
+Adiciona ao carrinho X unidades de um produto no depósito Y, onde essa quantidade diminui a quantidade guardada no depósito
+
+CONSULTAR CARRINHO carrinhoJoao[137];
+CONSULTAR CARRINHO carrinhoJoao;
+
+Podemos consultar ou a quantidade de um produto específico no carrinho ou todos os produtos do carrinho
 ```
 
 **VENDER**
 ```
-SELL qr_code PROVIDE quantidade END_LINE
+SELL nome_carrinho COLCH_OPEN qr_code COLCH_CLOSE SCAN EXPRESSAO END_LINE
 
-VENDER 737 : 30;
+VENDER carrinhoJoao[137] SCANEAR 3;
 
-VENDER é adicionar o produto no carrinho e receber uma determinada quantidade para esse produto, também diminui o valor definido em ESTOQUE
+Operação que vai executar a compra de um determinado produto presente no carrinho, onde a quantidade X que é scaneada subtrai a quantidade que está na lista
+```
+
+**GUARDAR**
+```
+GUARDAR cond = 7 * 13;
+
+Registrador que usamos como valor auxiliar durante as operações
+```
+
+**VERIFICAR/VERIFICAR_CONSTANTEMENTE**
+```
+VERIFICAR 1 < 2
+@@
+
+Verificação de condição que caso seja true, vai executar as operações até chegar em @@
+
+VERIFICAR_CONSTANTEMENTE 1 < 2
+$$
+
+Verificação de condição que caso seja true, vai executar as operações até chegar em $$
+
 ```
 
 **PAGAMENTO**
 ```
-PAYMENT PAGAMENTO MAQUININHA END_LINE
-
 PAGAMENTO PIX APROVADO;
 
-O pagamento finaliza tudo se o pagamento foi RECUSADO, caso seja APROVADO, continua para a etapa de FINALIZAR
+O pagamento finaliza tudo, se o pagamento foi RECUSADO, cancela as operações, caso seja APROVADO, continua para a etapa de FINALIZAR
 ```
 
 **FINALIZAR**
 ```
-END
 
-Finaliza o processo, caso seja usado antes da linha de PAGAMENTO, vai CANCELAR a compra
+Finaliza o processo, caso seja usado antes da linha de PAGAMENTO, vai CANCELAR a compra, caso contrário, vai perguntar se vai querer imprimir a nota fiscal
 ```
 
 ## Compilar/Executar
 ```
 make
-./caixa_auto < arquivo.jota
+./mercadinho algum_arquivo.jota
 
-O arquivo.jota você pode criar usando algum dos exemplos acima
+python3 caixa_autoVM.py mercado.asm
 ```

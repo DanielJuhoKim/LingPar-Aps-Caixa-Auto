@@ -1,0 +1,12 @@
+INICIAR
+
+MENSAGEM ("Teste IF");
+GUARDAR cond = 7 * 13;
+
+VERIFICAR cond > 5 * 10
+    MENSAGEM ("Entrou no IF");
+@@
+
+MENSAGEM ("Continuação");
+
+FINALIZAR

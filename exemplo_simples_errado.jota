@@ -6,7 +6,7 @@ PRODUTO presuntoSadia = 137 PRECO 4;
 
 CRIAR_DEPOSITO depositoCondominio13 : {};
 
-depositoCondominio13 [PRODUTO 137] : ADICIONAR 300;
+depositoCondominio130000000 [PRODUTO 137] : ADICIONAR 1;
 
 CONSULTAR DEPOSITO depositoCondominio13[137];
 

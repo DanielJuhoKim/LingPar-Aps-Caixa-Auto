@@ -40,6 +40,7 @@ class VirtualMachine:
         self.depositos: Dict[str, Deposito] = {}
         self.carrinhos: Dict[str, Carrinho] = {}
         self.variaveis: Dict[str, float] = {}
+        self.pagamento_status: str
         
         # Registradores
         self.registers: Dict[str, float] = {
@@ -249,8 +250,8 @@ class VirtualMachine:
         try:
             self._execute_instruction(instr)
             self.pc += 1
-        except Exception as e:
-            print(f"[ERRO VM] Instrução {instr.op} {instr.args}: {e}")
+        except Exception as eRRO:
+            print(eRRO)
             self.halted = True
 
     def _execute_instruction(self, instr: Instr):
@@ -326,7 +327,7 @@ class VirtualMachine:
             self.finalizar_execucao()
 
         else:
-            raise ValueError(f"Instrução desconhecida: {op}")
+            raise Exception(f"[Semântico] Instrução desconhecida: {op}")
 
     # --------------------------------------------------------
     #  OPERAÇÕES DO SISTEMA
@@ -345,9 +346,9 @@ class VirtualMachine:
     def adicionar_estoque(self, deposito_nome: str, qr: int, quantidade: int):
         """Adiciona estoque a um depósito"""
         if deposito_nome not in self.depositos:
-            raise ValueError(f"Depósito '{deposito_nome}' não existe")
+            raise Exception(f"[Semântico] [Semântico] Depósito '{deposito_nome}' não existe")
         if qr not in self.produtos:
-            raise ValueError(f"Produto QR={qr} não definido")
+            raise Exception(f"[Semântico] [Semântico] Produto QR={qr} não definido")
             
         dep = self.depositos[deposito_nome]
         dep.estoque[qr] = dep.estoque.get(qr, 0) + quantidade
@@ -369,18 +370,18 @@ class VirtualMachine:
     def adicionar_carrinho(self, carrinho_nome: str, deposito_nome: str, qr: int, quantidade: int):
         """Adiciona item ao carrinho"""
         if carrinho_nome not in self.carrinhos:
-            raise ValueError(f"Carrinho '{carrinho_nome}' não existe")
+            raise Exception(f"[Semântico] [Semântico] Carrinho '{carrinho_nome}' não existe")
         if deposito_nome not in self.depositos:
-            raise ValueError(f"Depósito '{deposito_nome}' não existe")
+            raise Exception(f"[Semântico] [Semântico] Depósito '{deposito_nome}' não existe")
         if qr not in self.produtos:
-            raise ValueError(f"Produto QR={qr} não definido")
+            raise Exception(f"[Semântico] [Semântico] Produto QR={qr} não definido")
             
         car = self.carrinhos[carrinho_nome]
         dep = self.depositos[deposito_nome]
         
         estoque_disponivel = dep.estoque.get(qr, 0)
         if estoque_disponivel < quantidade:
-            raise ValueError(f"Estoque insuficiente: {estoque_disponivel} disponíveis, {quantidade} solicitados")
+            raise Exception(f"[Semântico] [Semântico] Estoque insuficiente: {estoque_disponivel} disponíveis, {quantidade} solicitados")
             
         dep.estoque[qr] -= quantidade
         car.itens[qr] = car.itens.get(qr, 0) + quantidade
@@ -393,11 +394,11 @@ class VirtualMachine:
     def processar_venda(self, carrinho_nome: str, qr: int, quantidade: int):
         """Processa venda de itens do carrinho"""
         if carrinho_nome not in self.carrinhos:
-            raise ValueError(f"Carrinho '{carrinho_nome}' não existe")
+            raise Exception(f"[Semântico] [Semântico] Carrinho '{carrinho_nome}' não existe")
             
         car = self.carrinhos[carrinho_nome]
         if qr not in car.itens or car.itens[qr] < quantidade:
-            raise ValueError(f"Quantidade insuficiente no carrinho: {car.itens.get(qr, 0)} disponíveis")
+            raise Exception(f"[Semântico] [Semântico] Quantidade insuficiente no carrinho: {car.itens.get(qr, 0)} disponíveis")
             
         car.itens[qr] -= quantidade
         car.vendidos[qr] = car.vendidos.get(qr, 0) + quantidade
@@ -409,13 +410,13 @@ class VirtualMachine:
     def atribuir_variavel(self, nome: str, valor: float):
         """Atribui valor a uma variável existente"""
         if nome not in self.variaveis:
-            raise ValueError(f"Variável '{nome}' não declarada")
+            raise Exception(f"[Semântico] Variável '{nome}' não declarada")
         self.variaveis[nome] = valor
 
     def consultar_variavel(self, nome: str):
         """Consulta valor de uma variável"""
         if nome not in self.variaveis:
-            raise ValueError(f"Variável '{nome}' não existe")
+            raise Exception(f"[Semântico] Variável '{nome}' não existe")
         valor = self.variaveis[nome]
         print(f"{nome} = {valor:.2f}")
 
@@ -430,7 +431,7 @@ class VirtualMachine:
     def consultar_carrinho(self, carrinho_nome: str):
         """Consulta itens no carrinho"""
         if carrinho_nome not in self.carrinhos:
-            raise ValueError(f"Carrinho '{carrinho_nome}' não existe")
+            raise Exception(f"[Semântico] Carrinho '{carrinho_nome}' não existe")
             
         car = self.carrinhos[carrinho_nome]
         print(f"=== CARRINHO {carrinho_nome.upper()} ===")
@@ -448,7 +449,7 @@ class VirtualMachine:
     def consultar_item_carrinho(self, carrinho_nome: str, qr: int):
         """Consulta item específico no carrinho"""
         if carrinho_nome not in self.carrinhos:
-            raise ValueError(f"Carrinho '{carrinho_nome}' não existe")
+            raise Exception(f"[Semântico] Carrinho '{carrinho_nome}' não existe")
             
         car = self.carrinhos[carrinho_nome]
         qtd = car.itens.get(qr, 0)
@@ -461,7 +462,7 @@ class VirtualMachine:
     def consultar_deposito(self, deposito_nome: str, qr: int):
         """Consulta estoque no depósito"""
         if deposito_nome not in self.depositos:
-            raise ValueError(f"Depósito '{deposito_nome}' não existe")
+            raise Exception(f"[Semântico] Depósito '{deposito_nome}' não existe")
             
         dep = self.depositos[deposito_nome]
         qtd = dep.estoque.get(qr, 0)
@@ -486,6 +487,8 @@ class VirtualMachine:
         else:
             print("Transação recusada!")
 
+        self.pagamento_status = status
+
     def mostrar_mensagem(self, mensagem: str):
         """Mostra mensagem do sistema"""
         print(f"{mensagem}")
@@ -493,32 +496,33 @@ class VirtualMachine:
     def finalizar_execucao(self):
         """Finaliza a execução e mostra nota fiscal"""
 
-        notinha = input("\nImprimir nota fiscal(s/n)? ")
+        if self.pagamento_status == "APROVADO":
+            notinha = input("\nImprimir nota fiscal(s/n)? ")
 
-        if notinha == "s":
-            print("\n=== NOTA FISCAL ===")
-            print("Produtos vendidos:")
-            
-            total_venda = 0.0
-            produtos_vendidos = False
-            
-            # Percorrer todos os carrinhos
-            for carrinho_nome, carrinho in self.carrinhos.items():
-                for qr, quantidade_vendida in carrinho.vendidos.items():
-                    if quantidade_vendida > 0 and qr in self.produtos:
-                        produto = self.produtos[qr]
-                        subtotal = produto.preco * quantidade_vendida
-                        total_venda += subtotal
-                        print(f"- {quantidade_vendida}x {produto.nome} (carrinho {carrinho_nome}): R$ {subtotal:.2f}")
-                        produtos_vendidos = True
-            
-            if not produtos_vendidos:
-                print("- Nenhum produto foi adicionado")
-            
-            print(f"Total da venda: R$ {total_venda:.2f}")
-            print("===================")
+            if notinha == "s":
+                print("\n=== NOTA FISCAL ===")
+                print("Produtos vendidos:")
+                
+                total_venda = 0.0
+                produtos_vendidos = False
+                
+                # Percorrer todos os carrinhos
+                for carrinho_nome, carrinho in self.carrinhos.items():
+                    for qr, quantidade_vendida in carrinho.vendidos.items():
+                        if quantidade_vendida > 0 and qr in self.produtos:
+                            produto = self.produtos[qr]
+                            subtotal = produto.preco * quantidade_vendida
+                            total_venda += subtotal
+                            print(f"- {quantidade_vendida}x {produto.nome} (carrinho {carrinho_nome}): R$ {subtotal:.2f}")
+                            produtos_vendidos = True
+                
+                if not produtos_vendidos:
+                    print("- Nenhum produto foi adicionado")
+                
+                print(f"Total da venda: R$ {total_venda:.2f}")
+                print("===================")
 
-        print("\nCompra finalizada\n")
+            print("\nCompra finalizada\n")
         self.halted = True
 
     def run(self, max_steps: Optional[int] = 1000):

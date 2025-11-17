@@ -103,7 +103,8 @@ extern int yydebug;
     GREATER = 304,                 /* GREATER  */
     GREATER_EQUAL = 305,           /* GREATER_EQUAL  */
     EQUAL = 306,                   /* EQUAL  */
-    UMINUS = 307                   /* UMINUS  */
+    JMP = 307,                     /* JMP  */
+    UMINUS = 308                   /* UMINUS  */
   };
   typedef enum yytokentype yytoken_kind_t;
 #endif
@@ -112,13 +113,13 @@ extern int yydebug;
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
 union YYSTYPE
 {
-#line 139 "parser.y"
+#line 525 "parser.y"
 
     int num;
     double dbl;
     char* str;
 
-#line 122 "parser.tab.h"
+#line 123 "parser.tab.h"
 
 };
 typedef union YYSTYPE YYSTYPE;

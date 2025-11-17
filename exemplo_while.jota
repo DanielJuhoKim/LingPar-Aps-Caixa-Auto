@@ -1,21 +1,12 @@
 INICIAR
 
-PRODUTO Premium_A = 1001 PRECO 1;
-
-CRIAR_DEPOSITO deposit1 : {};
-deposit1 [PRODUTO 1001] : ADICIONAR 10;
-
 GUARDAR count = 0;
 
 MENSAGEM ("Inicio While");
-VERIFICAR_CONSTANTEMENTE count < 10
-    cart1 ADICIONAR deposit1 [1001] : 1;
+VERIFICAR_CONSTANTEMENTE count < 7
     count = count + 1;
     CONSULTAR count;
-    VENDER cart1 [1001] SCANEAR 1;
 $$
-
-CONSULTAR CARRINHO cart1;
 
 PAGAMENTO CREDITO APROVADO;
 

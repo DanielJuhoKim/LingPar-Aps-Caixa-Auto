@@ -6,35 +6,16 @@ section .text
 global _start
 _start:
     ; Início da execução do mercado
-    ; Mensagem: ""Teste simples""
-    ; Definir produto: presuntoSadia, QR: 137, Preço: 1.00
+    ; Mensagem: ""Teste RECUSADO""
+    ; Definir produto: salgados, QR: 137, Preço: 15.00
     ; Criar depósito: depositoCondominio7
-    ; Adicionar ao depósito depositoCondominio7: produto 137, quantidade 300
+    ; Adicionar ao depósito depositoCondominio7: produto 137, quantidade 40
     ; Consultar depósito depositoCondominio7[137]
     ; Criar carrinho: carrinhoJoao
-    ; Guardar variável: count = 0.00
-    ; Mensagem: ""Começo do WHile""
-    ; === INÍCIO DO LOOP WHILE ===
-    ; Labels: 0 (start), 1 (end)
-LABEL_0:
-    ; Verificar condição do while
-    ; Consultar variável count
-    ; Condição: se falsa, pular para LABEL_0
-    ; Comparação: count < 7
-    mov eax, [count]
-    cmp eax, 7
-    jge LABEL_0
-    ; Adicionar ao carrinho carrinhoJoao: produto 137 do depósito depositoCondominio7, quantidade 1
-    ; Consultar variável count
-    ; Atribuir variável: count = 1.00
-    ; Consultar variável: count
-    ; Voltar para verificar condição novamente
-    jmp LABEL_0
-LABEL_0:
-    ; === FIM DO LOOP WHILE ===
-    ; Mensagem: ""Fim do While""
+    ; Adicionar ao carrinho carrinhoJoao: produto 137 do depósito depositoCondominio7, quantidade 7
     ; Consultar carrinho carrinhoJoao[137]
-    ; Pagamento: CRÉDITO - APROVADO
+    ; Vender do carrinho carrinhoJoao: produto 137, quantidade 3
+    ; Pagamento: CRÉDITO - RECUSADO
 
 ; ========== FIM DO PROGRAMA ==========
     ; Finalização do sistema

@@ -1,0 +1,9 @@
+INICIAR
+
+MENSAGEM ("Teste sem Finalização, deve dar erro de PARSER pois deve TER FINALIZAR");
+
+PRODUTO presuntoSadia = 137 PRECO 1.0;
+
+GUARDAR count = 70;
+
+PAGAMENTO CREDITO APROVADO;
