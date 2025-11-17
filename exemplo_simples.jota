@@ -5,17 +5,14 @@ MENSAGEM ("Teste simples");
 PRODUTO presuntoSadia = 137 PRECO 4;
 
 CRIAR_DEPOSITO depositoCondominio13 : {};
-
 depositoCondominio13 [PRODUTO 137] : ADICIONAR 300;
-
 CONSULTAR DEPOSITO depositoCondominio13[137];
 
 CRIAR_CARRINHO carrinhoParnaiba : [];
-
 carrinhoParnaiba ADICIONAR depositoCondominio13[137] : 3;
-
 CONSULTAR CARRINHO carrinhoParnaiba[137];
 
 PAGAMENTO CREDITO APROVADO;
 
 FINALIZAR
+

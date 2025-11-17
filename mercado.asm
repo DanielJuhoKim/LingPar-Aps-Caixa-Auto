@@ -6,16 +6,11 @@ section .text
 global _start
 _start:
     ; Início da execução do mercado
-    ; Mensagem: ""Teste correto""
-    ; Definir produto: salgados, QR: 137, Preço: 15.00
-    ; Criar depósito: depositoCondominio7
-    ; Adicionar ao depósito depositoCondominio7: produto 137, quantidade 40
-    ; Consultar depósito depositoCondominio7[137]
-    ; Criar carrinho: carrinhoJoao
-    ; Adicionar ao carrinho carrinhoJoao: produto 137 do depósito depositoCondominio7, quantidade 7
-    ; Consultar carrinho carrinhoJoao[137]
-    ; Vender do carrinho carrinhoJoao: produto 137, quantidade 3
-    ; Pagamento: CRÉDITO - APROVADO
+    ; Mensagem: ""Teste Matemático""
+    ; Guardar variável: x = 7.00
+    ; Guardar variável: y = 3.00
+    ; Guardar variável: z = 10.00
+    ; Consultar variável: z
 
 ; ========== FIM DO PROGRAMA ==========
     ; Finalização do sistema

@@ -3,7 +3,6 @@ INICIAR
 MENSAGEM ("Teste Matemático");
 
 GUARDAR x = 7;
-
 GUARDAR y = 3;
 
 GUARDAR z = x + y;
