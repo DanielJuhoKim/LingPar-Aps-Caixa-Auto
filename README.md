@@ -144,6 +144,13 @@ CONSULTAR CARRINHO carrinhoJoao;
 Podemos consultar ou a quantidade de um produto específico no carrinho ou todos os produtos do carrinho
 ```
 
+**MENSAGEM**
+```
+MENSAGEM ("Teste");
+
+Instrução de print de string
+```
+
 **VENDER**
 ```
 SELL nome_carrinho COLCH_OPEN qr_code COLCH_CLOSE SCAN EXPRESSAO END_LINE
