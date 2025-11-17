@@ -6,7 +6,7 @@ section .text
 global _start
 _start:
     ; Início da execução do mercado
-    ; Mensagem: ""Teste RECUSADO""
+    ; Mensagem: ""Teste correto""
     ; Definir produto: salgados, QR: 137, Preço: 15.00
     ; Criar depósito: depositoCondominio7
     ; Adicionar ao depósito depositoCondominio7: produto 137, quantidade 40
@@ -15,7 +15,7 @@ _start:
     ; Adicionar ao carrinho carrinhoJoao: produto 137 do depósito depositoCondominio7, quantidade 7
     ; Consultar carrinho carrinhoJoao[137]
     ; Vender do carrinho carrinhoJoao: produto 137, quantidade 3
-    ; Pagamento: CRÉDITO - RECUSADO
+    ; Pagamento: CRÉDITO - APROVADO
 
 ; ========== FIM DO PROGRAMA ==========
     ; Finalização do sistema

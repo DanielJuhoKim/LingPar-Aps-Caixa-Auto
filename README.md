@@ -201,3 +201,31 @@ make
 
 python3 caixa_autoVM.py mercado.asm
 ```
+
+# Exemplo de saída usando arquivo exemplo_correto.jota
+
+========= Mercadinho do Jota no seu prédio =============
+
+"Teste correto"
+
+Depósito depositoCondominio7[salgados]: 40 unidades
+
+Carrinho carrinhoJoao[salgados]: 7 unidades
+
+Pagamento: CRÉDITO
+
+Status: APROVADO
+
+Imprimir nota fiscal(s/n)? s
+
+=== NOTA FISCAL ===
+
+Produtos vendidos:
+
+- 7x salgados (carrinho carrinhoJoao): R$ 105.00
+
+Total da venda: R$ 105.00
+
+===================
+
+Compra finalizada
