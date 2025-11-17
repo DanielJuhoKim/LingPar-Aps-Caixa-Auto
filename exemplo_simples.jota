@@ -1,0 +1,31 @@
+INICIAR
+
+MENSAGEM ("Teste simples");
+
+PRODUTO presuntoSadia = 137 PRECO 1.0;
+
+CRIAR_DEPOSITO depositoCondominio7 : {};
+
+depositoCondominio7 [PRODUTO 137] : ADICIONAR 300;
+
+CONSULTAR DEPOSITO depositoCondominio7[137];
+
+CRIAR_CARRINHO carrinhoJoao : [];
+
+GUARDAR count = 0;
+
+MENSAGEM ("Começo do WHile");
+VERIFICAR_CONSTANTEMENTE count < 13
+    carrinhoJoao ADICIONAR depositoCondominio7[137] : 1;
+
+    count = count + 1;
+    CONSULTAR count;
+$$
+
+MENSAGEM("Fim do While");
+
+CONSULTAR CARRINHO carrinhoJoao[137];
+
+PAGAMENTO CREDITO APROVADO;
+
+FINALIZAR

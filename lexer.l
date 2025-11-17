@@ -45,9 +45,10 @@ COMENTARIO \/\/[^\n]*
 "APROVADO"   { return APROVED; }
 "RECUSADO"   { return REFUSED; }
 
+"VERIFICAR_CONSTANTEMENTE"   {return WHILE; }   
 "VERIFICAR"   {return IF; }
-"VERIFICAR_CONSTANTEMENTE"   {return WHILE; }
 "@@"  { return STOP; }
+"$$"  { return STOP_WHILE; }
 "ALEM_DE"   { return AND; }
 "OU"    {return OR; }
 

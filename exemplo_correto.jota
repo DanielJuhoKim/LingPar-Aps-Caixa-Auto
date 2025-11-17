@@ -21,22 +21,14 @@ VERIFICAR limite_cliente > 400
     VERIFICAR PRODUTO 1001 * 2 + PRODUTO 1002 < limite_cliente
         VENDER cart1 [1001] SCANEAR 1;
         VENDER cart1 [1002] SCANEAR 1;
-        GUARDAR total_parcial = 7.90;
+        total_parcial = 7.90;
     @@
 @@
 
-VERIFICAR_CONSTANTEMENTE X < 7
-    CRIAR_CARRINHO cart1 : [];
-    cart1 ADICIONAR deposit1 [1001] : 2;
-    cart1 ADICIONAR deposit1 [1002] : 1;
-@@
-
 VERIFICAR limite_cliente - total_parcial > 50
-    MENSAGEM ("aqui esta");
-
     cart1 ADICIONAR deposit1 [1003] : 3;
     VENDER cart1 [1003] SCANEAR 3;
-    GUARDAR total_parcial = total_parcial + 24.80 * 3;
+    total_parcial = total_parcial + 24.80 * 3;
 @@
 
 CONSULTAR total_parcial;
@@ -45,5 +37,5 @@ CONSULTAR CARRINHO cart1;
 VERIFICAR total_parcial > 0
     PAGAMENTO CREDITO APROVADO;
 @@
-
+MENSAGEM ("Testando arquivos");
 FINALIZAR
